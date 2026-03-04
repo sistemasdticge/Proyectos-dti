@@ -1,0 +1,21 @@
+<!--
+  Pantalla mínima de laboratorio.
+  Se usa para validar visual y funcionalmente componentes de `shared-ui`
+  antes de promoverlos a la app principal de producción.
+-->
+<main class="min-h-screen bg-slate-100 p-8">
+  <section class="mx-auto max-w-3xl rounded-xl bg-white p-6 shadow">
+    <h1 class="mb-2 text-2xl font-bold">Laboratorio UI - pruebasdti</h1>
+    <p class="mb-6 text-slate-600">
+      Validación de componentes compartidos desde la librería shared-ui.
+    </p>
+    <!-- Ejemplo real de consumo con componentes organizados por carpetas (`components/buttons/*`). -->
+    <div class="flex flex-wrap gap-3">
+      <lib-aceptar label="Aceptar"></lib-aceptar>
+      <lib-eliminar label="Eliminar"></lib-eliminar>
+      <lib-cancelar label="Cancelar"></lib-cancelar>
+    </div>
+  </section>
+</main>
+
+<router-outlet></router-outlet>
