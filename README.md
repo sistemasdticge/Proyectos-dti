@@ -6,7 +6,6 @@
 2. Probar esos componentes primero en laboratorio: `apps/testing/pruebasdti`
 3. Usarlos en la app oficial cuando estén aprobados: `apps/production/Proyectos-dti`
 
----
 
 ## 1) Estructura del monorepo (qué es cada carpeta)
 
@@ -14,15 +13,15 @@
 
 Aquí viven aplicaciones ejecutables.
 
-- `apps/production/Proyectos-dti` → aplicación oficial
-- `apps/production/Proyectos-dti-e2e` → pruebas E2E de producción
-- `apps/testing/pruebasdti` → laboratorio para probar componentes
 
 ### `libs/`
 
 Aquí vive código compartido.
 
-- `libs/shared-ui` → librería de componentes reutilizables
+
+## Guías complementarias
+
+- Guía de estilos y personalización de componentes (Tailwind + PrimeNG): `docs/GUIA-TAILWIND-PRIMENG.md`
 
 ---
 

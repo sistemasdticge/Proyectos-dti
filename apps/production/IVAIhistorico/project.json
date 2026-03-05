@@ -1,0 +1,86 @@
+{
+  "name": "IVAIhistorico",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/production/IVAIhistorico/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/production/IVAIhistorico",
+        "browser": "apps/production/IVAIhistorico/src/main.ts",
+        "tsConfig": "apps/production/IVAIhistorico/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/production/IVAIhistorico/public"
+          }
+        ],
+        "styles": ["apps/production/IVAIhistorico/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "options": {
+        "proxyConfig": "apps/production/IVAIhistorico/proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "IVAIhistorico:build:production"
+        },
+        "development": {
+          "buildTarget": "IVAIhistorico:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/production/IVAIhistorico/jest.config.cts",
+        "tsConfig": "apps/production/IVAIhistorico/tsconfig.spec.json"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "IVAIhistorico:build",
+        "staticFilePath": "dist/apps/production/IVAIhistorico/browser",
+        "spa": true
+      }
+    }
+  }
+}

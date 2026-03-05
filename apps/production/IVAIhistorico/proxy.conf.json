@@ -1,0 +1,10 @@
+{
+  "/api": {
+
+    "target": "http://svr-test1/ivaihistorico.test",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
+

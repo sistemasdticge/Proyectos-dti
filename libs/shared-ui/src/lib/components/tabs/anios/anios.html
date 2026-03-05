@@ -1,0 +1,13 @@
+<div class="flex flex-wrap gap-2">
+	@for (item of items(); track item) {
+		<button
+			type="button"
+			class="year-chip"
+			[class.year-chip--active]="isSelected(item)"
+			[class.year-chip--inactive]="!isSelected(item)"
+			(click)="onSelect(item)"
+		>
+			{{ item }}
+		</button>
+	}
+</div>

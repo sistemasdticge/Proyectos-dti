@@ -66,11 +66,11 @@
   ],
   "generators": {
     "@nx/angular:application": {
-      "directory": "apps",
       "e2eTestRunner": "none",
       "linter": "eslint",
       "style": "scss",
-      "unitTestRunner": "jest"
+      "unitTestRunner": "jest",
+      "directory": "apps"
     },
     "@nx/angular:library": {
       "linter": "eslint",

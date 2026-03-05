@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+	--ivai-color-wine: #8c143f;
+	--ivai-color-wine-strong: #7a1036;
+	--ivai-color-wine-soft: #a13a5c;
+	--ivai-color-brown: #5c3327;
+	--ivai-color-gold: #bd8044;
+
+	--ivai-color-white: #ffffff;
+	--ivai-color-surface-soft: #fcf6f2;
+	--ivai-color-border-soft: #f0e4db;
+	--ivai-color-border-warm: #e8d4c6;
+	--ivai-color-ring-soft: #f1e3d7;
+
+	--ivai-gradient-primary: linear-gradient(
+		90deg,
+		var(--ivai-color-wine) 0%,
+		var(--ivai-color-wine) 72%,
+		var(--ivai-color-wine-soft) 100%
+	);
+	--ivai-gradient-primary-hover: linear-gradient(
+		90deg,
+		var(--ivai-color-wine-strong) 0%,
+		var(--ivai-color-wine-strong) 72%,
+		#923252 100%
+	);
+	--ivai-gradient-header: linear-gradient(
+		90deg,
+		var(--ivai-color-white) 0%,
+		#faf4f1 60%,
+		#fffaf6 100%
+	);
+}
