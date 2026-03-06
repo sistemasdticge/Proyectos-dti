@@ -70,14 +70,8 @@
 </main>
 
 @if (documentViewerOpen()) {
-	<div
-		class="doc-viewer-backdrop"
-		tabindex="0"
-		(click)="onDocumentViewerBackdropClick($event)"
-		(keydown.enter)="closeDocumentViewer()"
-		(keydown.space)="closeDocumentViewer()"
-	>
-		<section class="doc-viewer-panel">
+	<div class="doc-viewer-backdrop" (click)="closeDocumentViewer()">
+		<section class="doc-viewer-panel" (click)="$event.stopPropagation()">
 			<header class="doc-viewer-header">
 				<div>
 					<h3 class="doc-viewer-title">Vista previa del documento</h3>
