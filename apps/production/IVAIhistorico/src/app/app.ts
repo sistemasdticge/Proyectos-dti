@@ -186,6 +186,12 @@ export class App implements OnDestroy {
     this.clearDocumentPreview();
   }
 
+  protected onDocumentViewerBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeDocumentViewer();
+    }
+  }
+
   protected downloadDocument(): void {
     const blobUrl = this.documentViewerBlobUrl();
 
