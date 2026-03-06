@@ -39,7 +39,7 @@ jobs:
         run: npx nx run-many -t lint,test,build --all
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 'chore: monthly Nx/Angular migrations'
           title: 'chore: monthly Nx/Angular migrations'
