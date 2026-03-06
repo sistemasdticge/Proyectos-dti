@@ -18,15 +18,12 @@ interface ResolucionRow extends ArchivoRow {
 export class App implements OnDestroy {
   private readonly http = inject(HttpClient);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly apiBaseUrl =
-    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? ''
-      : '/ivaihistorico';
+  private readonly apiBaseUrl = '';
 
   protected readonly bannerSources = [
-    'banner/banner-principal.jpg',
-    'banner/banner-principal.jpeg',
-    'banner/banner-principal.png',
+    '/banner/banner-principal.jpg',
+    '/banner/banner-principal.jpeg',
+    '/banner/banner-principal.png',
   ];
 
   protected readonly years = signal<string[]>([]);
@@ -133,10 +130,8 @@ export class App implements OnDestroy {
       return;
     }
 
-    const currentSource = image.getAttribute('src') || image.src || '';
-    const currentIndex = this.bannerSources.findIndex(
-      (source) => currentSource === source || currentSource.endsWith(source),
-    );
+    const currentSource = image.getAttribute('src') || '';
+    const currentIndex = this.bannerSources.indexOf(currentSource);
 
     if (currentIndex === -1 || currentIndex >= this.bannerSources.length - 1) {
       return;
