@@ -13,6 +13,13 @@
 
 .table-control--search::placeholder {
 	color: color-mix(in srgb, var(--ivai-color-brown) 45%, white);
+	font-size: 12px;
+	text-align: center;
+}
+
+.table-control--search {
+	font-size: 12px;
+	text-align: center;
 }
 
 .table-shell {
@@ -21,6 +28,55 @@
 
 .table-head-row {
 	background: var(--ivai-gradient-header);
+	color: var(--ivai-color-brown);
+}
+
+.year-sort-wrap {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.year-column {
+	width: 120px;
+	min-width: 120px;
+	white-space: nowrap;
+}
+
+.file-column {
+	width: 62%;
+}
+
+.action-column {
+	text-align: right;
+}
+
+.action-header {
+	text-align: right;
+  padding-right: 88px;
+}
+
+.action-column lib-ver-documento {
+	display: inline-block;
+}
+
+.year-sort-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.2rem;
+	height: 1.2rem;
+	border: 1px solid var(--ivai-color-border-warm);
+	border-radius: 0.25rem;
+	background: var(--ivai-color-white);
+	color: var(--ivai-color-wine);
+	font-size: 0.72rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.year-sort-btn:hover {
+	background-color: var(--ivai-color-surface-soft);
 	color: var(--ivai-color-brown);
 }
 

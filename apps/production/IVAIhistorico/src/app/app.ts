@@ -20,11 +20,19 @@ export class App implements OnDestroy {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly apiBaseUrl = '';
 
+  protected readonly bannerSources = [
+    '/banner/banner-principal.jpg',
+    '/banner/banner-principal.jpeg',
+    '/banner/banner-principal.png',
+  ];
+
   protected readonly years = signal<string[]>([]);
   protected readonly tipoOptions = ['TODOS', 'RCRD', 'DP', 'OTROS'];
 
   protected readonly selectedYear = signal<string | null>(null);
+  protected readonly selectedYears = signal<string[]>([]);
   protected readonly selectedTipo = signal('TODOS');
+  protected readonly tablePageSize = signal(50);
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
@@ -36,23 +44,46 @@ export class App implements OnDestroy {
   protected readonly documentViewerPreviewError = signal<string | null>(null);
 
   constructor() {
-    this.loadCarpetas();
+    this.loadAllArchivos();
   }
 
   protected readonly selectedYearLabel = computed(() => {
-    const year = this.selectedYear();
+    const years = this.selectedYears();
 
-    if (!year) {
-      return 'sin selección';
+    if (years.length === 0) {
+      return 'todos los años';
     }
 
-    return year;
+    if (years.length === 1) {
+      return years[0];
+    }
+
+    return `${years.length} años`;
+  });
+
+  protected readonly yearFilterDescription = computed(() => {
+    const years = this.selectedYears();
+
+    if (years.length === 0) {
+      return 'Mostrando resoluciones de todos los años.';
+    }
+
+    if (years.length === 1) {
+      return `Mostrando únicamente archivos del año ${years[0]}.`;
+    }
+
+    return `Mostrando archivos de ${years.length} años seleccionados.`;
   });
 
   protected readonly filteredRows = computed(() => {
+    const years = this.selectedYears();
     const tipo = this.selectedTipo();
 
     return this.rows().filter((row) => {
+      if (years.length > 0 && (!row.anio || !years.includes(row.anio))) {
+        return false;
+      }
+
       if (tipo === 'TODOS') {
         return true;
       }
@@ -71,11 +102,42 @@ export class App implements OnDestroy {
 
   protected onYearChange(year: string): void {
     this.selectedYear.set(year);
-    this.loadArchivosByYear(year);
+  }
+
+  protected onYearSelectionChange(years: string[]): void {
+    this.selectedYears.set(years);
+    this.selectedYear.set(years.length === 1 ? years[0] : null);
+  }
+
+  protected onShowAllYears(): void {
+    this.selectedYears.set([]);
+    this.selectedYear.set(null);
+    this.tablePageSize.set(50);
+  }
+
+  protected onTablePageChange(change: { page: number; pageSize: number }): void {
+    this.tablePageSize.set(change.pageSize);
   }
 
   protected onTipoChange(value: string): void {
     this.selectedTipo.set(value);
+  }
+
+  protected onBannerError(event: Event): void {
+    const image = event.target as HTMLImageElement | null;
+
+    if (!image) {
+      return;
+    }
+
+    const currentSource = image.getAttribute('src') || '';
+    const currentIndex = this.bannerSources.indexOf(currentSource);
+
+    if (currentIndex === -1 || currentIndex >= this.bannerSources.length - 1) {
+      return;
+    }
+
+    image.src = this.bannerSources[currentIndex + 1];
   }
 
   protected onVerDocumento(row: ArchivoRow): void {
@@ -141,95 +203,46 @@ export class App implements OnDestroy {
     this.clearDocumentPreview();
   }
 
-  private loadCarpetas(): void {
+  private loadAllArchivos(): void {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    const endpoint = `${this.apiBaseUrl}/api/Files/carpetas`;
+    const endpoint = `${this.apiBaseUrl}/api/Files`;
     console.log('[IVAIhistorico] GET', endpoint);
 
     this.http
       .get<unknown>(endpoint)
       .pipe(
-        map((response) => this.normalizeCarpetas(response)),
+        map((response) => this.normalizeArchivos(response)),
         catchError((error) => {
-          console.error('[IVAIhistorico] Error GET carpetas', error);
-          this.errorMessage.set('No fue posible cargar las carpetas del servidor.');
+          console.error('[IVAIhistorico] Error GET archivos', error);
+          this.errorMessage.set('No fue posible cargar las resoluciones del servidor.');
           this.loading.set(false);
-          return of<string[]>([]);
-        }),
-      )
-      .subscribe((folders) => {
-        console.log('[IVAIhistorico] carpetas recibidas:', folders.length, folders);
-        this.years.set(folders);
-
-        if (folders.length === 0) {
-          this.selectedYear.set(null);
-          this.rows.set([]);
-          this.loading.set(false);
-          return;
-        }
-
-        const initialYear = folders[0];
-        this.selectedYear.set(initialYear);
-        this.loadArchivosByYear(initialYear);
-      });
-  }
-
-  private loadArchivosByYear(year: string): void {
-    this.loading.set(true);
-    this.errorMessage.set(null);
-
-    const endpoint = `${this.apiBaseUrl}/api/Files/${encodeURIComponent(year)}/Archivos`;
-    console.log('[IVAIhistorico] GET', endpoint);
-
-    this.http
-      .get<unknown>(endpoint)
-      .pipe(
-        map((response) => this.normalizeArchivos(response, year)),
-        catchError((error) => {
-          console.error(`[IVAIhistorico] Error GET archivos ${year}`, error);
-          this.errorMessage.set(`No fue posible cargar los archivos del año ${year}.`);
           return of<ResolucionRow[]>([]);
         }),
       )
       .subscribe((result) => {
         console.log('[IVAIhistorico] archivos recibidos:', result.length);
         this.rows.set(result);
+        this.years.set(this.extractYearsFromRows(result));
+        this.selectedYear.set(null);
+        this.selectedYears.set([]);
         this.loading.set(false);
       });
   }
 
-  private normalizeCarpetas(response: unknown): string[] {
+  private normalizeArchivos(response: unknown, year?: string): ResolucionRow[] {
     const source = this.extractArrayPayload(response);
 
     return source
       .map((item) => {
         if (typeof item === 'string') {
-          return item;
-        }
+          const resolvedYear = year ?? '';
 
-        if (item && typeof item === 'object' && 'nombreCarpeta' in item) {
-          const value = item['nombreCarpeta'];
-          return typeof value === 'string' ? value : '';
-        }
-
-        return '';
-      })
-      .filter((item) => item.length > 0)
-      .sort((a, b) => Number(b) - Number(a));
-  }
-
-  private normalizeArchivos(response: unknown, year: string): ResolucionRow[] {
-    const source = this.extractArrayPayload(response);
-
-    return source
-      .map((item) => {
-        if (typeof item === 'string') {
           return {
             nombreArchivo: item,
-            anio: year,
-            carpeta: year,
+            anio: resolvedYear,
+            carpeta: resolvedYear,
           } as ResolucionRow;
         }
 
@@ -257,16 +270,33 @@ export class App implements OnDestroy {
         const carpeta =
           (typeof archivo['nombreCarpeta'] === 'string' && archivo['nombreCarpeta']) ||
           (typeof archivo['nombreCarperta'] === 'string' && archivo['nombreCarperta']) ||
-          year;
+          '';
+
+        const anio =
+          (typeof archivo['anio'] === 'string' && archivo['anio']) ||
+          (typeof archivo['year'] === 'string' && archivo['year']) ||
+          carpeta ||
+          year ||
+          '';
 
         return {
           nombreArchivo: nombre,
           fechaPublicacion,
-          anio: year,
-          carpeta,
+          anio,
+          carpeta: carpeta || anio,
         } as ResolucionRow;
       })
       .filter((item): item is ResolucionRow => item !== null);
+  }
+
+  private extractYearsFromRows(rows: ResolucionRow[]): string[] {
+    const uniqueYears = new Set(
+      rows
+        .map((row) => row.anio)
+        .filter((value): value is string => typeof value === 'string' && value.length > 0),
+    );
+
+    return Array.from(uniqueYears).sort((a, b) => Number(b) - Number(a));
   }
 
   private extractArrayPayload(response: unknown): unknown[] {

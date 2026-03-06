@@ -3,6 +3,18 @@
 	font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
+.banner-wrap {
+	width: 100%;
+	overflow: hidden;
+	background: var(--ivai-color-white);
+}
+
+.banner-image {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
 .animate-fade-up,
 .animate-fade-up-delay-1,
 .animate-fade-up-delay-2,

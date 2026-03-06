@@ -22,25 +22,19 @@ describe('App', () => {
     httpMock.verify();
   });
 
-  it('should render main heading', async () => {
+  it('should load all resolutions on init and show all years label', async () => {
     const fixture = TestBed.createComponent(App);
 
-    const carpetasRequest = httpMock.expectOne(
-      '/api/Files/carpetas',
-    );
-    carpetasRequest.flush([{ nombreCarpeta: '2025' }, { nombreCarpeta: '2024' }]);
-
-    const archivosRequest = httpMock.expectOne(
-      '/api/Files/2025/Archivos',
-    );
-    archivosRequest.flush(['IVAI-REV-001-2025.pdf']);
+    const allArchivosRequest = httpMock.expectOne('/api/Files');
+    allArchivosRequest.flush([
+      { nombreCarpeta: '2025', nombreArchivo: 'IVAI-REV-001-2025.pdf' },
+      { nombreCarpeta: '2024', nombreArchivo: 'IVAI-REV-001-2024.pdf' },
+    ]);
 
     await fixture.whenStable();
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Consulta Histórica de Resoluciones',
-    );
+    expect(compiled.querySelector('h2')?.textContent).toContain('Resoluciones de todos los años');
   });
 });

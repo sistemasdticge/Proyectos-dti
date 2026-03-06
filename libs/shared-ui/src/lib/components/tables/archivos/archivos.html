@@ -4,11 +4,10 @@
       <span>Mostrar</span>
       <select
         class="table-control"
-        [value]="selectedPageSize()"
         (change)="onPageSizeChange($any($event.target).value)"
       >
         @for (option of pageSizeOptions(); track option) {
-          <option [value]="option">{{ option }}</option>
+          <option [value]="option" [selected]="option === selectedPageSize()">{{ option }}</option>
         }
       </select>
       <span>registros</span>
@@ -19,6 +18,7 @@
       <input
         type="text"
         class="table-control table-control--search"
+        placeholder="Nombre del archivo"
         [value]="busqueda()"
         (input)="onBusqueda($any($event.target).value)"
       />
@@ -26,31 +26,46 @@
   </div>
 
   <div class="table-shell overflow-x-auto rounded-xl bg-white">
-    <table class="w-full border-separate border-spacing-0 overflow-hidden">
+    <table class="w-full table-fixed border-separate border-spacing-0 overflow-hidden">
       <thead>
         <tr class="table-head-row text-left text-sm font-semibold uppercase tracking-wide">
-          <th class="px-4 py-3">Nombre del Archivo</th>
-          <th class="px-4 py-3 w-44">Acción</th>
+          <th class="file-column px-4 py-3">Nombre del Archivo</th>
+          <th class="year-column px-4 py-3">
+            <span class="year-sort-wrap">
+              <span>Año</span>
+              <button
+                type="button"
+                class="year-sort-btn"
+                [attr.aria-label]="yearSortOrder() === 'desc' ? 'Ordenar año ascendente' : 'Ordenar año descendente'"
+                [title]="yearSortOrder() === 'desc' ? 'Cambiar a ascendente' : 'Cambiar a descendente'"
+                (click)="toggleYearSort()"
+              >
+                {{ yearSortOrder() === 'desc' ? '↓' : '↑' }}
+              </button>
+            </span>
+          </th>
+          <th class="action-header px-4 py-3 w-44">Acción</th>
         </tr>
       </thead>
       <tbody>
         @if (loading()) {
           <tr>
-            <td class="px-4 py-5 text-center text-slate-500" colspan="2">
+            <td class="px-4 py-5 text-center text-slate-500" colspan="3">
               Cargando registros...
             </td>
           </tr>
         } @else if (visibleRows().length === 0) {
           <tr>
-            <td class="px-4 py-5 text-center text-slate-500" colspan="2">
+            <td class="px-4 py-5 text-center text-slate-500" colspan="3">
               No hay registros para mostrar.
             </td>
           </tr>
         } @else {
           @for (row of visibleRows(); track row.nombreArchivo; let i = $index) {
             <tr [class]="i % 2 === 0 ? 'bg-white' : 'bg-slate-50'">
-              <td class="border-t border-slate-100 px-4 py-3 text-sm text-slate-700">{{ row.nombreArchivo }}</td>
-              <td class="border-t border-slate-100 px-4 py-3">
+              <td class="file-column border-t border-slate-100 px-4 py-3 text-sm text-slate-700">{{ row.nombreArchivo }}</td>
+              <td class="year-column border-t border-slate-100 px-4 py-3 text-sm text-slate-700">{{ row.anio || '-' }}</td>
+              <td class="action-column border-t border-slate-100 px-4 py-3">
                 <lib-ver-documento (clicked)="onVerDocumento(row)" />
               </td>
             </tr>
