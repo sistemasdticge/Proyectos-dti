@@ -1,7 +1,7 @@
 {
   "/api": {
 
-    "target": "http://svr-test1/ivaihistorico.test",
+    "target": "https://sistemas4.cgever.gob.mx/ivaihistorico/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
