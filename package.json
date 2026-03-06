@@ -2,9 +2,16 @@
   "name": "@proyectos-dti/source",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=22 <23",
+    "npm": ">=10"
+  },
   "scripts": {
     "g:shared-ui": "node tools/scripts/generate-shared-ui-component.mjs",
-    "g:shared-ui:help": "node tools/scripts/generate-shared-ui-component.mjs --help"
+    "g:shared-ui:help": "node tools/scripts/generate-shared-ui-component.mjs --help",
+    "update:nx:latest": "nx migrate latest",
+    "update:nx:run-migrations": "nx migrate --run-migrations",
+    "verify:workspace": "nx run-many -t lint,test,build --all"
   },
   "private": true,
   "dependencies": {
