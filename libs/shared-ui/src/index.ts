@@ -3,6 +3,7 @@ export * from './lib/components/buttons/aceptar/aceptar';
 export * from './lib/components/buttons/eliminar/eliminar';
 export * from './lib/components/buttons/cancelar/cancelar';
 export * from './lib/components/buttons/ver-documento/ver-documento';
+export * from './lib/components/cards/login-card/login-card';
 
 export * from './lib/components/tabs/anios/anios';
 export * from './lib/components/tables/archivos/archivos';

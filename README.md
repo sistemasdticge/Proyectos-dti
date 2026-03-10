@@ -22,6 +22,7 @@ Aquí vive código compartido.
 ## Guías complementarias
 
 - Guía de estilos y personalización de componentes (Tailwind + PrimeNG): `docs/GUIA-TAILWIND-PRIMENG.md`
+- Guía para actualizaciones futuras de Nx y Angular: `docs/GUIA-ACTUALIZACION-DEPENDENCIAS.md`
 
 ---
 
