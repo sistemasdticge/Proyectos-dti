@@ -1,32 +1,38 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-4 bg-slate-50 rounded-lg">
   <div class="mb-4">
-    <label class="block text-sm font-medium text-slate-700 mb-2">Nombre:</label>
+    <label for="nombre" class="block text-sm font-medium text-slate-700 mb-2">Nombre:</label>
     <input
+      id="nombre"
       type="text"
       formControlName="nombre"
       placeholder="Ingresa tu nombre"
       class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       [class.border-red-500]="nombre?.invalid && nombre?.touched"
     >
-    <div class="text-red-500 text-sm mt-1" *ngIf="nombre?.invalid && nombre?.touched">
-      <div *ngIf="nombre?.errors?.['required']">El nombre es requerido</div>
-      <div *ngIf="nombre?.errors?.['minlength']">Mínimo 3 caracteres</div>
-    </div>
+    <ng-container *ngIf="nombre?.invalid && nombre?.touched">
+      <div class="text-red-500 text-sm mt-1">
+        <ng-container *ngIf="nombre?.errors?.['required']">El nombre es requerido</ng-container>
+        <ng-container *ngIf="nombre?.errors?.['minlength']">Mínimo 3 caracteres</ng-container>
+      </div>
+    </ng-container>
   </div>
 
   <div class="mb-6">
-    <label class="block text-sm font-medium text-slate-700 mb-2">Mensaje:</label>
+    <label for="mensaje" class="block text-sm font-medium text-slate-700 mb-2">Mensaje:</label>
     <textarea
+      id="mensaje"
       formControlName="mensaje"
       placeholder="Escribe tu mensaje..."
       class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       rows="3"
       [class.border-red-500]="mensaje?.invalid && mensaje?.touched"
     ></textarea>
-    <div class="text-red-500 text-sm mt-1" *ngIf="mensaje?.invalid && mensaje?.touched">
-      <div *ngIf="mensaje?.errors?.['required']">El mensaje es requerido</div>
-      <div *ngIf="mensaje?.errors?.['maxlength']">Máximo 500 caracteres</div>
-    </div>
+    <ng-container *ngIf="mensaje?.invalid && mensaje?.touched">
+      <div class="text-red-500 text-sm mt-1">
+        <ng-container *ngIf="mensaje?.errors?.['required']">El mensaje es requerido</ng-container>
+        <ng-container *ngIf="mensaje?.errors?.['maxlength']">Máximo 500 caracteres</ng-container>
+      </div>
+    </ng-container>
   </div>
 
   <div class="flex justify-end gap-3">
