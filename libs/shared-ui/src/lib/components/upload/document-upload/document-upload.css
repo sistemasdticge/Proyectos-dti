@@ -1,0 +1,5 @@
+/* Estilos mínimos para el componente de carga de documentos */
+
+:host {
+  display: block;
+}

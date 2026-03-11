@@ -10,3 +10,6 @@ export * from './lib/components/tables/archivos/archivos';
 
 // Nuevo componente de formulario
 export * from './lib/components/forms/form-ejemplo/form-ejemplo';
+
+// Componente vacío de carga de documentos
+export * from './lib/components/upload/document-upload/document-upload';
