@@ -1,0 +1,73 @@
+// ==========================================
+// Estilos personalizados para app.scss
+// ==========================================
+
+// Variables de colores
+$color-primary: #3b82f6;
+$color-success: #10b981;
+$color-danger: #ef4444;
+$color-warning: #f59e0b;
+$color-dark: #1f2937;
+
+// Estilos globales del componente
+:host {
+  display: block;
+}
+
+// Transiciones suave para interacciones
+main {
+  section {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    }
+  }
+}
+
+// Estilos para etiquetas personalizadas (custom elements)
+lib-aceptar,
+lib-cancelar,
+lib-eliminar {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+// Efecto hover en los botones
+button:hover {
+  transform: scale(1.05);
+}
+
+// Estilos para inputs en los formularios
+input,
+textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: $color-primary !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+// Estilos para código inline
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875em;
+}
+
+// Animación de entrada suave
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+section {
+  animation: slideInUp 0.5s ease;
+}

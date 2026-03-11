@@ -7,3 +7,6 @@ export * from './lib/components/cards/login-card/login-card';
 
 export * from './lib/components/tabs/anios/anios';
 export * from './lib/components/tables/archivos/archivos';
+
+// Nuevo componente de formulario
+export * from './lib/components/forms/form-ejemplo/form-ejemplo';
