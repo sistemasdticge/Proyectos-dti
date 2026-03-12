@@ -1,62 +1,58 @@
-<!-- Pantalla de laboratorio mejorada para pruebas de componentes -->
-<main class="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-8">
-  <!-- Header -->
-  <header class="mb-12 text-center">
-    <h1 class="text-4xl font-bold text-white mb-2">🧪 Laboratorio UI - pruebasdti</h1>
-    <p class="text-slate-300 text-lg">Zona de pruebas para componentes compartidos de shared-ui</p>
-  </header>
+<main class="min-h-screen bg-slate-100 p-6 md:p-8">
+  <div class="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <header class="border-b border-slate-200 px-6 py-4">
+      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-800">Administración de Usuarios</h1>
+          <p class="mt-1 text-slate-500">
+            Gestione accesos, roles y estado de usuarios en la plataforma.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="add-user-button"
+        >
+          + Add New User
+        </button>
+      </div>
+    </header>
 
-  <!-- Contenedor principal -->
-  <div class="mx-auto max-w-4xl">
-    <!-- Sección 1: Botones de Acción Básicos -->
-    <section class="rounded-lg bg-white p-8 mb-6 shadow-lg">
-      <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-blue-500 pb-2">
-        📌 Botones de Acción Básicos
-      </h2>
-      <p class="text-slate-600 mb-6">Estos son los componentes fundamentales para interacciones comunes:</p>
-      <div class="flex flex-wrap gap-4 p-4 bg-slate-50 rounded-lg">
-        <lib-aceptar label="Aceptar"></lib-aceptar>
-        <lib-cancelar label="Cancelar"></lib-cancelar>
-        <lib-eliminar label="Eliminar"></lib-eliminar>
+    <section class="space-y-5 p-6">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Filters:</span>
+          <select class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600">
+            <option>Área: Todas</option>
+            <option>IT &amp; Operations</option>
+            <option>Human Resources</option>
+            <option>Finance</option>
+          </select>
+          <select class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600">
+            <option>Tipo: Todos</option>
+            <option>Admin</option>
+            <option>Editor</option>
+            <option>Viewer</option>
+          </select>
+        </div>
+
+        <span class="text-sm text-slate-400">Showing {{ usuarios.length }} users</span>
+      </div>
+
+      <lib-tabla-usuarios
+        [rows]="usuarios"
+        (editar)="onEditar($event)"
+        (toggleEstado)="onToggleEstado($event)"
+      ></lib-tabla-usuarios>
+
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>Page 1 of 1</span>
+        <div class="inline-flex items-center gap-2">
+          <button type="button" class="rounded border border-slate-200 px-2 py-1">&lt;</button>
+          <button type="button" class="rounded border border-slate-200 px-2 py-1">&gt;</button>
+        </div>
       </div>
     </section>
+  </div>
 
-    <!-- Sección 2: Variantes de Botones -->
-    <section class="rounded-lg bg-white p-8 mb-6 shadow-lg">
-      <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-green-500 pb-2">
-        🎨 Variantes de Etiquetas
-      </h2>
-      <p class="text-slate-600 mb-6">Prueba con diferentes textos para validar la flexibilidad:</p>
-      <div class="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
-        <div>
-          <p class="text-sm text-slate-500 mb-2">Textos Cortos:</p>
-          <div class="flex flex-wrap gap-2">
-            <lib-aceptar label="OK"></lib-aceptar>
-            <lib-cancelar label="No"></lib-cancelar>
-          </div>
-        </div>
-        <div>
-          <p class="text-sm text-slate-500 mb-2">Textos Largos:</p>
-          <div class="flex flex-wrap gap-2">
-            <lib-aceptar label="Guardar Cambios"></lib-aceptar>
-            <lib-eliminar label="Eliminar Definitivamente"></lib-eliminar>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección 3: Contexto de Uso - Componente Formulario -->
-    <section class="rounded-lg bg-white p-8 mb-6 shadow-lg">
-      <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-purple-500 pb-2">
-        💡 Contexto de Uso - Componente Formulario
-      </h2>
-      <p class="text-slate-600 mb-6">
-        Este formulario es ahora un componente reutilizable desde <code class="bg-slate-100 px-2 py-1 rounded">libs/shared-ui</code>.
-        Tiene validación, manejo de estado y puede reutilizarse en cualquier app.
-      </p>
-      <lib-form-ejemplo></lib-form-ejemplo>
-    </section>
-
-  
-
-<router-outlet></router-outlet>
+  <router-outlet></router-outlet>
+</main>

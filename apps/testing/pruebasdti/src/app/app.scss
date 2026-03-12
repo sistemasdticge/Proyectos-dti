@@ -14,6 +14,43 @@ $color-dark: #1f2937;
   display: block;
 }
 
+.add-user-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--ivai-color-wine, #8a1d4f);
+  background: var(--ivai-color-wine, #8a1d4f);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ivai-color-white, #ffffff);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  transition: all 200ms ease-out;
+}
+
+.add-user-button:hover {
+  transform: translateY(-1px) scale(1);
+  background: var(--ivai-gradient-primary-hover, #721943);
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
+}
+
+.add-user-button:active {
+  transform: scale(0.98);
+}
+
+.add-user-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ivai-color-ring-soft, rgb(138 29 79 / 0.22));
+}
+
+.add-user-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 // Transiciones suave para interacciones
 main {
   section {
