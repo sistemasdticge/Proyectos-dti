@@ -12,7 +12,7 @@
           type="button"
           class="add-user-button"
         >
-          + Add New User
+          + Agregar Nuevo Usuario
         </button>
       </div>
     </header>
@@ -20,22 +20,22 @@
     <section class="space-y-5 p-6">
       <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Filters:</span>
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Filtros:</span>
           <select class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600">
             <option>Área: Todas</option>
-            <option>IT &amp; Operations</option>
-            <option>Human Resources</option>
-            <option>Finance</option>
+            <option>IT &amp; Operativa</option>
+            <option>Recursos Humanos</option>
+            <option>Finanzas</option>
           </select>
           <select class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600">
             <option>Tipo: Todos</option>
-            <option>Admin</option>
+            <option>Administrador</option>
             <option>Editor</option>
-            <option>Viewer</option>
+            <option>Visualizador</option>
           </select>
         </div>
 
-        <span class="text-sm text-slate-400">Showing {{ usuarios.length }} users</span>
+        <span class="text-sm text-slate-400">Mostrando {{ usuarios.length }} usuarios</span>
       </div>
 
       <lib-tabla-usuarios
@@ -45,7 +45,7 @@
       ></lib-tabla-usuarios>
 
       <div class="flex items-center justify-between text-xs text-slate-400">
-        <span>Page 1 of 1</span>
+        <span>Página 1 de 1</span>
         <div class="inline-flex items-center gap-2">
           <button type="button" class="rounded border border-slate-200 px-2 py-1">&lt;</button>
           <button type="button" class="rounded border border-slate-200 px-2 py-1">&gt;</button>
