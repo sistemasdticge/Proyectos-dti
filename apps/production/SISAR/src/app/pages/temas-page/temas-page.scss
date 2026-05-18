@@ -1,0 +1,70 @@
+:host {
+	display: block;
+}
+
+.temas-page-shell {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.temas-filters-card {
+	border: 1px solid #e2e8f0;
+	border-radius: 1rem;
+	background: #ffffff;
+	padding: 1rem 1.1rem;
+	box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+}
+
+:host ::ng-deep .temas-detail-shell .p-inputtext,
+:host ::ng-deep .temas-detail-shell .p-select,
+:host ::ng-deep .temas-detail-shell .p-datepicker {
+	border-radius: 0.55rem;
+}
+
+:host ::ng-deep .temas-detail-shell .p-select,
+:host ::ng-deep .temas-detail-shell .p-datepicker {
+	width: 100%;
+}
+
+.temas-edit-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.75rem 0.95rem;
+	border: 1px solid #fecdd3;
+	border-radius: 0.75rem;
+	background: linear-gradient(90deg, #fff1f2 0%, #fff7f8 100%);
+}
+
+.temas-edit-banner-title {
+	margin: 0;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: #8b1a2e;
+}
+
+.temas-edit-banner-subtitle {
+	margin: 0.1rem 0 0;
+	font-size: 0.8rem;
+	color: #64748b;
+}
+
+.temas-edit-banner-icon {
+	font-size: 1.1rem;
+	color: #8b1a2e;
+}
+
+.temas-edit-actions-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.65rem 0.85rem;
+	border: 1px dashed #cbd5e1;
+	border-radius: 0.75rem;
+	background: #f8fafc;
+}

@@ -1,0 +1,77 @@
+<!--
+  Navbar superior reusable para usar en cualquier layout privado.
+  Se construye con PrimeNG (input/avatar/botones) + TailwindCSS (layout/estetica).
+  Ajustes solicitados:
+  - Pegado arriba.
+  - Sin bordes redondeados en el contenedor principal.
+  - Buscador mas compacto.
+  - Datos de usuario siempre visibles.
+-->
+<header
+  class="sticky top-0 z-40 flex h-[64px] w-full items-center justify-between gap-3 rounded-none border-x-0 border-b border-t-0 border-white/20 bg-gradient-to-r from-[#8f1d2f] to-[#a42335] px-3 py-2 shadow-[0_8px_20px_rgba(76,7,24,0.28)] backdrop-blur-sm"
+  @topNavbarEnter
+>
+  <!-- Bloque de busqueda: version mas compacta para no ocupar tanto alto/ancho -->
+  <div
+    class="top-navbar-search flex min-w-[150px] flex-[0_1_420px] items-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-2.5 py-1.5 transition-all duration-200 focus-within:border-[#f0f0f0] focus-within:bg-white/15 focus-within:shadow-[0_0_0_3px_rgba(255,209,102,0.22)]"
+  >
+    <i class="pi pi-search text-xs text-white/90"></i>
+    <input
+      pInputText
+      type="text"
+      class="top-navbar-search-input w-full"
+      [placeholder]="config.searchPlaceholder"
+      [value]="searchTerm()"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+
+  <!-- Bloque de acciones -->
+  <div class="top-navbar-actions ml-auto flex shrink-0 items-center gap-2.5">
+    <button
+      pButton
+      type="button"
+      class="relative !h-[42px] !w-[42px] !overflow-visible !rounded-full !border !border-white/20 !bg-white/10 !text-white transition-all duration-200 hover:-translate-y-px hover:!border-[#ffffff] hover:!bg-white/20"
+      aria-label="Notificaciones"
+      (click)="onNotificationClick()"
+    >
+      <i class="pi pi-bell text-base"></i>
+
+      @if (config.notificationCount > 0) {
+        <span
+          class="absolute -right-2 -top-2 z-10 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-[#9e1f39] bg-[#22c55e] px-1 text-[0.64rem] font-bold text-white shadow-[0_2px_6px_rgba(0,0,0,0.2)]"
+          [@notificationBadgePulse]="badgeAnimationState()"
+        >
+          {{ config.notificationCount }}
+        </span>
+      }
+    </button>
+
+    <span class="h-8 w-px bg-white/25"></span>
+
+    <button
+      pButton
+      type="button"
+      class="top-navbar-user inline-flex shrink-0 !h-[40px] !min-w-[196px] items-center gap-2 !rounded-full !border !border-white/20 !bg-white/10 !px-2.5 !py-1 !text-white transition-all duration-200 hover:-translate-y-px hover:!border-[#ffd166] hover:!bg-white/20"
+      aria-label="Menu de usuario"
+      (click)="onUserMenuClick()"
+    >
+      <!--
+        Informacion de usuario SIEMPRE visible (se quito ocultamiento por breakpoint).
+        Si el contenedor no envia un valor, mostramos fallback para evitar boton vacio.
+      -->
+      <div class="flex min-w-[120px] flex-1 flex-col items-end leading-none text-right">
+        <span class="truncate text-[0.82rem] font-semibold text-white">{{ config.userName || 'Admin User' }}</span>
+        <span class="mt-1 truncate text-[0.62rem] font-bold uppercase tracking-[0.1em] text-white/70">{{ config.userRole || 'Coordinacion' }}</span>
+      </div>
+
+      <p-avatar
+        [image]="config.avatarUrl"
+        icon="pi pi-user"
+        shape="circle"
+        size="normal"
+        styleClass="!w-[30px] !h-[30px]"
+      />
+    </button>
+  </div>
+</header>

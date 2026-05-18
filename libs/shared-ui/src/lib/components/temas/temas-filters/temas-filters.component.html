@@ -1,0 +1,22 @@
+<div class="flex flex-wrap items-center gap-2">
+  @for (f of filters; track f.key) {
+    <button
+      pButton
+      type="button"
+      [ngClass]="
+        active === f.key
+          ? '!bg-[#8B1A2E] !border-[#8B1A2E] !text-white'
+          : '!bg-white !border-slate-200 !text-slate-600 hover:!border-[#8B1A2E] hover:!text-[#8B1A2E]'
+      "
+      class="!rounded-full !px-4 !py-1.5 !text-sm !font-medium transition-all"
+      (click)="select(f.key)"
+    >
+      <span class="flex items-center gap-1.5">
+        @if (f.dotClass) {
+          <span [ngClass]="['inline-block w-2 h-2 rounded-full', f.dotClass]"></span>
+        }
+        {{ f.label }}
+      </span>
+    </button>
+  }
+</div>

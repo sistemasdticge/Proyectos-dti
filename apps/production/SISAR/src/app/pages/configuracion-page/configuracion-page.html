@@ -1,0 +1,276 @@
+<p-toast position="top-right"></p-toast>
+
+<section class="config-page-shell" @pageSectionEnter>
+  <lib-temas-toolbar
+    class="page-animate-block"
+    title="Configuración"
+    subtitle="Personaliza tu experiencia diaria: perfil, interfaz, notificaciones y forma de trabajo."
+    createLabel="Guardar cambios"
+    (create)="saveUserConfiguration()"
+  />
+
+  <div class="grid gap-4 xl:grid-cols-2 page-animate-block">
+    <lib-config-section-card
+      title="Perfil"
+      subtitle="Información de tu usuario en el sistema."
+      icon="pi pi-user"
+    >
+      <div class="space-y-3">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+          <div class="flex flex-col gap-2">
+            <div>
+              <span class="text-slate-500 block text-xs font-medium">Nombre</span>
+              <span class="mt-1 block font-semibold text-slate-800">{{ userDisplayName() }}</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block text-xs font-medium">Rol</span>
+              <span class="mt-1 block font-semibold text-slate-800">{{ userRole() }}</span>
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">Los datos de tu perfil se cargan desde tu cuenta de sistema.</p>
+      </div>
+    </lib-config-section-card>
+
+    <lib-config-section-card
+      title="Apariencia"
+      subtitle="Ajusta la interfaz para mejorar legibilidad y comodidad visual."
+      icon="pi pi-palette"
+    >
+      <form [formGroup]="uiForm" class="space-y-3">
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-slate-700 "  >Tema</label>
+          <p-select
+            formControlName="theme"
+            [options]="themeOptions"
+            optionLabel="label"
+            optionValue="value"
+            [appendTo]="'body'"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-slate-700">Escala de texto (%)</label>
+          <input pInputText formControlName="fontScale" type="number" min="90" max="130" class="w-full" />
+        </div>
+
+        <label class="config-checkbox-row">
+          <input type="checkbox" formControlName="compactMode" />
+          <span>Modo compacto en tablas y tarjetas</span>
+        </label>
+
+        <label class="config-checkbox-row">
+          <input type="checkbox" formControlName="reduceMotion" />
+          <span>Reducir movimiento y transiciones</span>
+        </label>
+
+        <label class="config-checkbox-row">
+          <input type="checkbox" formControlName="highContrast" />
+          <span>Mejorar contraste visual</span>
+        </label>
+      </form>
+    </lib-config-section-card>
+  </div>
+
+  <div class="grid gap-4 xl:grid-cols-2 page-animate-block">
+    <lib-config-section-card
+      title="Notificaciones"
+      subtitle="Controla cuándo y cómo quieres recibir avisos."
+      icon="pi pi-bell"
+    >
+      <form [formGroup]="notificationsForm" class="space-y-3">
+        <label class="config-checkbox-row">
+          <input type="checkbox" formControlName="desktopEnabled" />
+          <span>Notificaciones emergentes en pantalla</span>
+        </label>
+
+        <label class="config-checkbox-row">
+          <input type="checkbox" formControlName="dueDateAlerts" />
+          <span>Alertas por próximos vencimientos</span>
+        </label>
+
+        <label class="config-checkbox-row">
+          <input type="checkbox" formControlName="soundEnabled" />
+          <span>Reproducir sonido al recibir alertas</span>
+        </label>
+
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-slate-700">Recordatorio previo (minutos)</label>
+          <input pInputText formControlName="remindersMinutes" type="number" min="5" max="240" class="w-full" />
+        </div>
+      </form>
+    </lib-config-section-card>
+
+    <lib-config-section-card
+      title="Espacio de trabajo"
+      subtitle="Define cómo quieres iniciar y consultar la información diariamente."
+      icon="pi pi-briefcase"
+    >
+      <form [formGroup]="workspaceForm" class="space-y-3">
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-slate-700">Módulo de inicio</label>
+          <p-select
+            formControlName="defaultStartModule"
+            [options]="startModuleOptions"
+            optionLabel="label"
+            optionValue="value"
+            [appendTo]="'body'"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-slate-700">Tamaño de página en tablas</label>
+          <p-select
+            formControlName="temasPageSize"
+            [options]="pageSizeOptions"
+            optionLabel="label"
+            optionValue="value"
+            [appendTo]="'body'"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-slate-700">Auto refresco (minutos)</label>
+          <input pInputText formControlName="autoRefreshMinutes" type="number" min="0" max="120" class="w-full" />
+        </div>
+
+        <label class="config-checkbox-row">
+          <input type="checkbox" formControlName="showCompletedByDefault" />
+          <span>Mostrar elementos completados por defecto</span>
+        </label>
+      </form>
+    </lib-config-section-card>
+  </div>
+
+  <div class="grid gap-4 xl:grid-cols-2">
+    <lib-config-section-card
+      title="Sesión"
+      subtitle="Estado de autenticación y acciones rápidas de seguridad personal."
+      icon="pi pi-shield"
+    >
+      <div class="space-y-3">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="text-slate-600">Estado:</span>
+          @if (hasSession()) {
+            <p-tag severity="success" value="Activa"></p-tag>
+          } @else {
+            <p-tag severity="warn" value="Sin sesión"></p-tag>
+          }
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+          {{ tokenExpirationLabel() }}
+        </div>
+
+        <div class="flex justify-end">
+          <button
+            pButton
+            type="button"
+            class="p-button-outlined !rounded-lg !text-red-600 !border-red-300"
+            (click)="clearSession()"
+          >Cerrar sesión local</button>
+        </div>
+      </div>
+    </lib-config-section-card>
+
+    <lib-config-section-card
+      title="Opciones avanzadas"
+      subtitle="Herramientas técnicas para soporte o pruebas de conectividad."
+      icon="pi pi-cog"
+    >
+      <div class="space-y-3">
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined !rounded-lg"
+          (click)="toggleAdvancedOptions()"
+        >
+          {{ advancedOptionsOpen() ? 'Ocultar opciones técnicas' : 'Mostrar opciones técnicas' }}
+        </button>
+
+        @if (advancedOptionsOpen()) {
+          <form [formGroup]="endpointForm" class="space-y-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <div class="space-y-1">
+              <label class="text-sm font-medium text-slate-700">Endpoint predefinido</label>
+              <p-select
+                formControlName="apiUrl"
+                [options]="apiOptions"
+                optionLabel="label"
+                optionValue="value"
+                [appendTo]="'body'"
+                styleClass="w-full"
+              />
+            </div>
+
+            <div class="flex justify-end">
+              <button
+                pButton
+                type="button"
+                class="!rounded-lg !bg-gradient-to-r !from-[#8B1A2E] !to-[#a6243d] !border-0 hover:!from-[#771728] hover:!to-[#921f35]"
+                (click)="applySelectedEndpoint()"
+              >Aplicar endpoint</button>
+            </div>
+
+            <div class="border-t border-slate-200 pt-3 space-y-2">
+              <label class="text-sm font-medium text-slate-700">URL personalizada</label>
+              <div class="flex flex-col gap-2 md:flex-row">
+                <input
+                  pInputText
+                  formControlName="customApiUrl"
+                  placeholder="http://tu-servidor/api"
+                  class="w-full"
+                />
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-outlined !rounded-lg"
+                  (click)="applyCustomEndpoint()"
+                >Aplicar</button>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3">
+              <div class="text-sm text-slate-600">
+                Estado conexión:
+                @if (testResult() === 'ok') {
+                  <p-tag severity="success" value="Conectado"></p-tag>
+                } @else if (testResult() === 'error') {
+                  <p-tag severity="danger" value="Sin conexión"></p-tag>
+                } @else {
+                  <p-tag severity="secondary" value="Sin validar"></p-tag>
+                }
+              </div>
+
+              <button
+                pButton
+                type="button"
+                class="p-button-outlined !rounded-lg"
+                [loading]="loadingApiTest()"
+                [disabled]="loadingApiTest()"
+                (click)="testApiConnection()"
+              >Validar ahora</button>
+            </div>
+          </form>
+        }
+      </div>
+    </lib-config-section-card>
+  </div>
+
+  <div class="config-actions-row">
+    <button
+      pButton
+      type="button"
+      class="p-button-outlined !rounded-lg"
+      (click)="restoreDefaults()"
+    >Restaurar valores</button>
+    <button
+      pButton
+      type="button"
+      class="!rounded-lg !bg-gradient-to-r !from-[#8B1A2E] !to-[#a6243d] !border-0 hover:!from-[#771728] hover:!to-[#921f35]"
+      (click)="saveUserConfiguration()"
+    >Guardar configuración</button>
+  </div>
+</section>

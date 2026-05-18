@@ -1,0 +1,213 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [appendTo]="'body'"
+  [baseZIndex]="1200"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '600px' }"
+  header="Registrar Nuevo Tema"
+  styleClass="temas-modal"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 pt-2">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="tipoTemaId" class="text-sm font-medium text-slate-700">
+          Tipo de Tema <span class="text-red-500">*</span>
+        </label>
+        <p-select
+          inputId="tipoTemaId"
+          formControlName="tipoTemaId"
+          [options]="tipoTemaOptions"
+          optionLabel="label"
+          optionValue="id"
+          placeholder="Seleccione tipo de tema..."
+          styleClass="w-full"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="tipoPrioridadId" class="text-sm font-medium text-slate-700">
+          Tipo de Prioridad <span class="text-red-500">*</span>
+        </label>
+        <p-select
+          inputId="tipoPrioridadId"
+          formControlName="tipoPrioridadId"
+          [options]="prioridadOptions"
+          optionLabel="label"
+          optionValue="id"
+          placeholder="Seleccione prioridad..."
+          styleClass="w-full"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="titulo" class="text-sm font-medium text-slate-700">
+        Título del Tema <span class="text-red-500">*</span>
+      </label>
+      <input
+        pInputText
+        id="titulo"
+        formControlName="titulo"
+        placeholder="Ej. Actualización de protocolos de seguridad"
+        class="w-full"
+      />
+      @if (form.get('titulo')?.invalid && form.get('titulo')?.touched) {
+        <span class="text-xs text-red-500">Requerido (máx. 180 caracteres)</span>
+      }
+    </div>
+
+    <!-- Descripción -->
+    <div class="flex flex-col gap-1">
+      <label for="descripcion" class="text-sm font-medium text-slate-700">
+        Descripción Detallada <span class="text-red-500">*</span>
+      </label>
+      <textarea
+        pTextarea
+        id="descripcion"
+        formControlName="descripcion"
+        rows="4"
+        placeholder="Proporcione una explicación completa de la incidencia o propuesta..."
+        class="w-full"
+      ></textarea>
+      @if (form.get('descripcion')?.invalid && form.get('descripcion')?.touched) {
+        <span class="text-xs text-red-500">Requerido (máx. 800 caracteres)</span>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="areaIds" class="text-sm font-medium text-slate-700">
+          Área Responsable <span class="text-red-500">*</span>
+        </label>
+        <p-multiSelect
+          inputId="areaIds"
+          formControlName="areaIds"
+          [options]="areaOptions"
+          optionLabel="label"
+          optionValue="id"
+          placeholder="Seleccione área..."
+          styleClass="w-full"
+          [maxSelectedLabels]="2"
+          [appendTo]="'body'"
+          display="chip"
+        />
+        @if (form.get('areaIds')?.invalid && form.get('areaIds')?.touched) {
+          <span class="text-xs text-red-500">Selecciona al menos un área</span>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="fechaLimite" class="text-sm font-medium text-slate-700">
+          Fecha Límite de Resolución
+          <span class="text-slate-400 text-xs font-normal">(opcional)</span>
+        </label>
+        <p-datepicker
+          inputId="fechaLimite"
+          formControlName="fechaLimite"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          placeholder="dd/mm/yy"
+          styleClass="w-full"
+          [minDate]="minDate"
+          [appendTo]="'body'"
+          [showButtonBar]="true"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="numControl" class="text-sm font-medium text-slate-700">
+        Número de control
+        <span class="text-slate-400 text-xs font-normal">(opcional)</span>
+      </label>
+      <input
+        pInputText
+        id="numControl"
+        formControlName="numControl"
+        placeholder="Ej. ABC-001"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Archivo adjunto (opcional) -->
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-medium text-slate-700">
+        Archivo Adjunto
+        <span class="text-slate-400 text-xs font-normal">(opcional)</span>
+      </span>
+      <label
+        class="cursor-pointer inline-flex items-center gap-2 w-fit border border-slate-300 rounded-md px-4 py-2 text-sm text-slate-600 hover:border-[#8B1A2E] hover:text-[#8B1A2E] transition-colors"
+      >
+        <i class="pi pi-paperclip text-sm"></i>
+        Adjuntar archivo
+        <input
+          type="file"
+          class="hidden"
+          (change)="onFileInputChange($event)"
+        />
+      </label>
+      @if (selectedFiles.length > 0) {
+        <div class="flex flex-wrap gap-1 mt-1">
+          <span class="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+            <i class="pi pi-file text-xs"></i>{{ selectedFiles[0].name }}
+          </span>
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="tipoDocumentoId" class="text-sm font-medium text-slate-700">
+        Tipo de documento
+        <span class="text-slate-400 text-xs font-normal">
+          {{ selectedFiles.length > 0 ? '(obligatorio con archivo)' : '(opcional)' }}
+        </span>
+      </label>
+      <p-select
+        inputId="tipoDocumentoId"
+        formControlName="tipoDocumentoId"
+        [options]="tipoDocumentoOptions"
+        optionLabel="label"
+        optionValue="id"
+        placeholder="Seleccione tipo de documento..."
+        styleClass="w-full"
+        [appendTo]="'body'"
+        [showClear]="true"
+      />
+      @if (selectedFiles.length > 0 && form.get('tipoDocumentoId')?.touched && !form.get('tipoDocumentoId')?.value) {
+        <span class="text-xs text-red-500">Selecciona el tipo de documento para adjuntar archivo.</span>
+      }
+    </div>
+
+    @if (feedbackMsg) {
+      <p-message
+        [severity]="feedbackError ? 'error' : 'success'"
+        [text]="feedbackMsg"
+      />
+    }
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined !text-slate-600 !border-slate-300"
+        [disabled]="saving"
+        (click)="close()"
+      >Cancelar</button>
+      <button
+        pButton
+        type="button"
+        class="!bg-[#8B1A2E] !border-[#8B1A2E] hover:!bg-[#6e1525]"
+        [loading]="saving"
+        [disabled]="saving"
+        (click)="submit()"
+      ><i class="pi pi-save mr-1"></i>Registrar Tema</button>
+    </div>
+  </ng-template>
+</p-dialog>

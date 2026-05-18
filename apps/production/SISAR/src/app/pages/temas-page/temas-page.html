@@ -1,0 +1,572 @@
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog appendTo="body" [baseZIndex]="1300"></p-confirmDialog>
+<lib-document-viewer
+  [open]="filePreviewOpen()"
+  [loading]="filePreviewLoading()"
+  [error]="filePreviewError()"
+  [blobUrl]="filePreviewBlobUrl()"
+  [mimeType]="filePreviewMimeType()"
+  [fileName]="filePreviewName()"
+  (closeModal)="closeFilePreview()"
+  (download)="downloadPreviewFile()"
+></lib-document-viewer>
+
+<section class="temas-page-shell" @pageSectionEnter>
+  <lib-temas-toolbar
+    class="page-animate-block"
+    title="Temas Activos"
+    subtitle="Gestión y seguimiento de los asuntos institucionales en curso."
+    createLabel="Nuevo Tema"
+    (create)="showModal.set(true)"
+  />
+
+  <div class="temas-filters-card page-animate-block">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Filtros de estado</p>
+      <p class="text-sm text-slate-500">Total: <span class="font-semibold text-slate-700">{{ total() }}</span> temas</p>
+    </div>
+
+    <div class="mt-3">
+      <lib-temas-filters
+        [active]="activeFilter()"
+        [total]="total()"
+        (activeChange)="onFilterChange($event)"
+      />
+    </div>
+
+    @if (areaCatalogError()) {
+      <div class="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        {{ areaCatalogError() }}
+      </div>
+    }
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm page-animate-block">
+    <lib-temas-table
+      [rows]="visibleRows()"
+      [loading]="loading()"
+      (detail)="onDetail($event)"
+    />
+  </div>
+
+  @if (total() > pageSize) {
+    <lib-temas-pagination
+      class="page-animate-block"
+      [page]="page()"
+      [pageSize]="pageSize"
+      [total]="total()"
+      (pageChange)="onPageChange($event)"
+    />
+  }
+</section>
+
+<lib-temas-create-modal
+  [visible]="showModal()"
+  (visibleChange)="showModal.set($event)"
+  [areaOptions]="areaOptions()"
+  [tipoTemaOptions]="tipoTemaOptions()"
+  [prioridadOptions]="prioridadOptions()"
+  [tipoDocumentoOptions]="tipoDocumentoOptions()"
+  (created)="onCreated()"
+/>
+
+<p-dialog
+  [visible]="showDetailModal()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [appendTo]="'body'"
+  [baseZIndex]="1200"
+  [style]="{ width: '1120px', maxWidth: '98vw' }"
+  [contentStyle]="{ 'max-height': '78vh', overflow: 'auto' }"
+  header="Detalle del Tema"
+  (visibleChange)="!$event && closeDetailModal()"
+>
+  @if (loadingDetail()) {
+    <div class="py-10 text-center text-sm text-slate-500">Cargando detalle del tema...</div>
+  } @else if (detailError()) {
+    <div class="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+      {{ detailError() }}
+    </div>
+  } @else if (selectedTema(); as tema) {
+    <div class="space-y-4 temas-detail-shell">
+      @if (detailEditMode()) {
+        <div class="temas-edit-banner">
+          <div>
+            <p class="temas-edit-banner-title">Modo edición activo</p>
+            <p class="temas-edit-banner-subtitle">Actualiza los datos del tema y después guarda los cambios.</p>
+          </div>
+          <i class="pi pi-file-edit temas-edit-banner-icon"></i>
+        </div>
+      }
+
+      <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <p class="text-xs uppercase tracking-[0.12em] text-slate-400">Nombre del tema</p>
+          <p class="text-base font-semibold text-slate-700">{{ temaDisplayName(tema) }}</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          @if (!detailEditMode()) {
+            <button
+              pButton
+              type="button"
+              class="!rounded-lg !bg-gradient-to-r !from-[#8B1A2E] !to-[#a6243d] !border-0 hover:!from-[#771728] hover:!to-[#921f35]"
+              (click)="enableEdit()"
+            >Editar</button>
+          } @else {
+            <p-tag severity="info" value="Editando"></p-tag>
+          }
+        </div>
+      </div>
+      </div>
+
+      <form [formGroup]="detailForm" class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="md:col-span-2 flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <h3 class="text-sm font-semibold text-slate-700">Datos generales del tema</h3>
+          @if (detailEditMode()) {
+            <span class="text-xs text-slate-400">Los campos con * son obligatorios</span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Tipo de tema <span class="text-red-500">*</span></p>
+          @if (detailEditMode()) {
+            <p-select
+              formControlName="tipoTemaId"
+              [options]="detailTipoTemaOptions()"
+              optionLabel="label"
+              optionValue="id"
+              [appendTo]="'body'"
+              styleClass="w-full"
+            />
+            @if (detailForm.get('tipoTemaId')?.invalid && detailForm.get('tipoTemaId')?.touched) {
+              <span class="text-xs text-red-500">Selecciona un tipo de tema.</span>
+            }
+          } @else {
+            <p class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">{{ tema.tipoTema || '—' }}</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Prioridad <span class="text-red-500">*</span></p>
+          @if (detailEditMode()) {
+            <p-select
+              formControlName="tipoPrioridadId"
+              [options]="detailPrioridadOptions()"
+              optionLabel="label"
+              optionValue="id"
+              [appendTo]="'body'"
+              styleClass="w-full"
+            />
+            @if (detailForm.get('tipoPrioridadId')?.invalid && detailForm.get('tipoPrioridadId')?.touched) {
+              <span class="text-xs text-red-500">Selecciona una prioridad.</span>
+            }
+          } @else {
+            <p class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">{{ tema.tipoPrioridad || '—' }}</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5 md:col-span-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Descripción <span class="text-red-500">*</span></p>
+          @if (detailEditMode()) {
+            <textarea
+              pTextarea
+              formControlName="descripcion"
+              rows="4"
+              class="w-full"
+            ></textarea>
+            @if (detailForm.get('descripcion')?.invalid && detailForm.get('descripcion')?.touched) {
+              <span class="text-xs text-red-500">Ingresa una descripción válida.</span>
+            }
+          } @else {
+            <p class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 whitespace-pre-wrap">{{ tema.descripcion || '—' }}</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Fecha de vencimiento</p>
+          @if (detailEditMode()) {
+            <p-datepicker
+              formControlName="fechaVencimiento"
+              dateFormat="dd/mm/yy"
+              [appendTo]="'body'"
+              [showIcon]="true"
+              [minDate]="todayMinDate"
+              styleClass="w-full"
+            />
+          } @else {
+            <p class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+              {{ formatFechaDetalle(tema.fechaVencimiento) }}
+            </p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Número de control</p>
+          @if (detailEditMode()) {
+            <input pInputText formControlName="numControl" class="w-full" />
+          } @else {
+            <p class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">{{ formatNumControl(tema.numControl) }}</p>
+          }
+        </div>
+      </form>
+
+      <section class="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-700">Archivos del tema</h3>
+            <p class="mt-1 text-xs text-slate-500">Documentos adjuntos al tema global.</p>
+          </div>
+          <p-tag severity="info" [value]="archivosTema(tema).length + ' archivos'"></p-tag>
+        </div>
+
+        @if (archivoDownloadError()) {
+          <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {{ archivoDownloadError() }}
+          </div>
+        }
+
+        @if (archivosTema(tema).length) {
+          <ul class="space-y-2">
+            @for (archivo of archivosTema(tema); track $index) {
+              <li class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                <div class="flex min-w-0 items-start gap-3">
+                  <i class="pi pi-paperclip mt-0.5 text-slate-400"></i>
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-medium text-slate-700">{{ archivo.nombreArchivo || 'Archivo adjunto' }}</p>
+                    <p class="text-xs text-slate-400">{{ archivo.tipoDocumento || 'Sin tipo de documento' }}</p>
+                  </div>
+                </div>
+
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-outlined p-button-sm !rounded-lg"
+                  [loading]="isArchivoDownloading('tema', archivo)"
+                  [disabled]="!hasArchivoDownloadId(archivo) || downloadingArchivoKey() !== null"
+                  (click)="viewTemaArchivo(archivo)"
+                >
+                  Ver archivo
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-500">
+            Este tema no tiene archivos adjuntos.
+          </p>
+        }
+
+        @if (detailEditMode()) {
+          <div class="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+            <div class="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Agregar archivo al tema</p>
+                <p class="mt-1 text-sm text-slate-500">Se subir&aacute; despu&eacute;s de guardar los datos generales del tema.</p>
+              </div>
+              <div>
+                <input #detailFileInput type="file" class="hidden" (change)="onDetailFileSelected($event)" />
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-outlined !rounded-lg"
+                  [disabled]="detailSaving()"
+                  (click)="detailFileInput.click()"
+                >
+                  Seleccionar archivo
+                </button>
+              </div>
+            </div>
+
+            @if (detailSelectedFiles().length) {
+              <div class="mt-4 grid gap-3 md:grid-cols-[1fr_1fr]">
+                <div>
+                  <p class="mb-2 text-sm font-medium text-slate-700">Tipo de documento <span class="text-red-500">*</span></p>
+                  <p-select
+                    [ngModel]="detailUploadTipoDocumentoId()"
+                    (ngModelChange)="detailUploadTipoDocumentoId.set($event || '')"
+                    [ngModelOptions]="{ standalone: true }"
+                    [options]="tipoDocumentoOptions()"
+                    optionLabel="label"
+                    optionValue="id"
+                    [appendTo]="'body'"
+                    placeholder="Selecciona tipo de documento"
+                    styleClass="w-full"
+                  />
+                </div>
+
+                <ul class="space-y-2">
+                  @for (file of detailSelectedFiles(); track trackByDetailSelectedFile($index, file)) {
+                    <li class="flex items-start justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2">
+                      <div class="min-w-0">
+                        <p class="truncate text-sm font-medium text-slate-700">{{ file.name }}</p>
+                        <p class="text-xs text-slate-400">{{ formatFileSize(file.size) }}</p>
+                      </div>
+                      <button
+                        pButton
+                        type="button"
+                        class="p-button-text p-button-sm"
+                        [disabled]="detailSaving()"
+                        (click)="removeDetailSelectedFile(file)"
+                      >
+                        Quitar
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      @if (detailEditMode()) {
+        <div class="temas-edit-actions-bar">
+          <p class="text-xs text-slate-500">Revisa la información antes de guardar para evitar errores.</p>
+          <div class="flex items-center gap-2">
+            <button
+              pButton
+              type="button"
+              class="p-button-outlined !rounded-lg"
+              [disabled]="detailSaving()"
+              (click)="cancelEdit()"
+            >Cancelar</button>
+            <button
+              pButton
+              type="button"
+              class="!rounded-lg !bg-gradient-to-r !from-[#8B1A2E] !to-[#a6243d] !border-0 hover:!from-[#771728] hover:!to-[#921f35]"
+              [loading]="detailSaving()"
+              [disabled]="detailSaving()"
+              (click)="saveTemaEdit()"
+            >Guardar cambios</button>
+          </div>
+        </div>
+      }
+
+      <section class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-sm font-semibold text-slate-700">Progreso de entrega por áreas</h3>
+          <div class="flex items-center gap-2 text-xs">
+            <p-tag severity="success" [value]="turnosEntregados() + ' entregadas'"></p-tag>
+            <p-tag severity="warn" [value]="turnosPendientes() + ' pendientes'"></p-tag>
+          </div>
+        </div>
+
+        <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+          <div
+            class="h-full bg-gradient-to-r from-emerald-500 to-emerald-600"
+            [style.width.%]="progresoPct()"
+          ></div>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">{{ progresoPct() }}% completado ({{ turnosEntregados() }} de {{ turnosTotal() }} áreas)</p>
+      </section>
+
+      <section class="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-sm font-semibold text-slate-700">Turnos / Áreas asignadas</h3>
+        </div>
+
+        @if (detailEditMode()) {
+          <div class="grid grid-cols-1 gap-2 rounded-md border border-slate-200 bg-white p-3 md:grid-cols-[1fr_auto]">
+            <select
+              class="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700"
+              [value]="selectedAddAreaId()"
+              (change)="selectedAddAreaId.set($any($event.target).value || '')"
+            >
+              <option value="">Seleccione área para agregar...</option>
+              @for (area of availableAreaOptions(); track area.id) {
+                <option [value]="area.id">{{ area.label }}</option>
+              }
+            </select>
+
+            <button
+              pButton
+              type="button"
+              class="!bg-[#8B1A2E] !border-[#8B1A2E] hover:!bg-[#6e1525]"
+              [disabled]="!selectedAddAreaId() || turnosSaving()"
+              [loading]="turnosSaving()"
+              (click)="addTurno()"
+            >Agregar área</button>
+          </div>
+        }
+
+        @if (detailTurnos().length) {
+          <div class="space-y-2">
+            @for (turno of detailTurnos(); track turno.id) {
+              <div class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50/60 px-3 py-2">
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-slate-700">{{ areaDisplayLabel(turno) }}</p>
+                  <p class="text-xs text-slate-400">Asignaci&oacute;n por &aacute;rea</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <p-tag
+                    [severity]="areaStatusSeverity(turno)"
+                    [value]="areaStatusLabel(turno)"
+                  ></p-tag>
+
+                  @if (detailEditMode()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text !text-red-600"
+                      [disabled]="turnosSaving()"
+                      (click)="removeTurno(turno.id)"
+                    >Quitar</button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-sm text-slate-500">No hay turnos registrados para este tema.</p>
+        }
+      </section>
+
+      <section class="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-700">Seguimientos por &aacute;rea</h3>
+            <p class="mt-1 text-xs text-slate-500">Revisi&oacute;n administrativa de avances registrados por cada &aacute;rea asignada.</p>
+          </div>
+          <p-tag severity="info" [value]="turnosTotal() + ' áreas'"></p-tag>
+        </div>
+
+        @if (detailTurnos().length) {
+          <div class="space-y-3">
+            @for (turno of detailTurnos(); track turno.id) {
+              <article class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50/70">
+                <button
+                  type="button"
+                  class="flex w-full flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 text-left transition-colors hover:bg-slate-50"
+                  (click)="toggleSeguimientosArea(turno.id)"
+                  [attr.aria-expanded]="isSeguimientosExpanded(turno.id)"
+                >
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <p class="text-sm font-semibold text-slate-800">{{ areaDisplayLabel(turno) }}</p>
+                      <p-tag
+                        [severity]="areaStatusSeverity(turno)"
+                        [value]="areaStatusLabel(turno)"
+                      ></p-tag>
+                    </div>
+                    <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                      <span>{{ seguimientosForTurno(turno.id).length }} seguimientos</span>
+                      <span>
+                        Fecha de solventado:
+                        {{ turno.fechaSolventado ? (turno.fechaSolventado | date:'dd/MM/yyyy HH:mm') : 'Sin registrar' }}
+                      </span>
+                    </div>
+
+                    @if (ultimoSeguimientoForTurno(turno.id); as ultimo) {
+                      <p class="mt-2 line-clamp-2 text-sm text-slate-600">
+                        <span class="font-medium text-slate-700">Último seguimiento:</span>
+                        {{ ultimo.descripcion || 'Sin descripción' }}
+                      </p>
+                    } @else if (!isSeguimientosLoading(turno.id) && !seguimientosError(turno.id)) {
+                      <p class="mt-2 text-sm text-slate-500">Esta área aún no ha registrado seguimientos.</p>
+                    }
+                  </div>
+
+                  <div class="flex shrink-0 items-center gap-2">
+                    @if (isSeguimientosLoading(turno.id)) {
+                      <span class="text-xs text-slate-400">Cargando...</span>
+                    }
+                    <i
+                      class="pi text-slate-400"
+                      [class.pi-chevron-down]="!isSeguimientosExpanded(turno.id)"
+                      [class.pi-chevron-up]="isSeguimientosExpanded(turno.id)"
+                    ></i>
+                  </div>
+                </button>
+
+                @if (isSeguimientosExpanded(turno.id)) {
+                  <div class="border-t border-slate-200 px-4 py-4">
+                    @if (isSeguimientosLoading(turno.id)) {
+                      <div class="rounded-lg border border-slate-200 bg-white px-4 py-5 text-center text-sm text-slate-500">
+                        Cargando seguimientos del área...
+                      </div>
+                    } @else if (seguimientosError(turno.id)) {
+                      <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        {{ seguimientosError(turno.id) }}
+                      </div>
+                    } @else if (sortedSeguimientosForTurno(turno.id).length) {
+                      <div class="space-y-3">
+                        @for (seguimiento of sortedSeguimientosForTurno(turno.id); track seguimiento.id) {
+                          <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div class="flex flex-wrap items-center gap-2">
+                              <p class="text-sm font-semibold text-slate-800">
+                                {{ seguimiento.fecha | date:'dd/MM/yyyy HH:mm' }}
+                              </p>
+                              <p-tag
+                                [severity]="seguimientoSituacionSeverity(seguimiento)"
+                                [value]="seguimiento.situacion || 'Sin situación'"
+                              ></p-tag>
+                            </div>
+
+                            <p class="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-700">
+                              {{ seguimiento.descripcion || 'Sin observaciones registradas' }}
+                            </p>
+
+                            <div class="mt-4">
+                              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Archivos adjuntos</p>
+                              @if (archivosForSeguimiento(seguimiento).length) {
+                                <ul class="mt-2 space-y-2">
+                                  @for (archivo of archivosForSeguimiento(seguimiento); track $index) {
+                                    <li class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                                      <div class="flex min-w-0 items-start gap-3">
+                                        <i class="pi pi-paperclip mt-0.5 text-slate-400"></i>
+                                        <div class="min-w-0">
+                                          <p class="truncate text-sm font-medium text-slate-700">{{ archivo.nombreArchivo || 'Archivo adjunto' }}</p>
+                                          <p class="text-xs text-slate-400">{{ archivo.tipoDocumento || 'Sin tipo de documento' }}</p>
+                                        </div>
+                                      </div>
+
+                                      <button
+                                        pButton
+                                        type="button"
+                                        class="p-button-outlined p-button-sm !rounded-lg"
+                                        [loading]="isArchivoDownloading('seguimiento', archivo)"
+                                        [disabled]="!hasArchivoDownloadId(archivo) || downloadingArchivoKey() !== null"
+                                        (click)="viewSeguimientoArchivo(archivo, seguimiento)"
+                                      >
+                                        Ver archivo
+                                      </button>
+                                    </li>
+                                  }
+                                </ul>
+                              } @else {
+                                <p class="mt-2 text-sm text-slate-500">Este seguimiento no tiene archivos adjuntos.</p>
+                              }
+                            </div>
+                          </article>
+                        }
+                      </div>
+                    } @else {
+                      <div class="rounded-lg border border-slate-200 bg-white px-4 py-6 text-center text-sm text-slate-500">
+                        Esta área aún no ha registrado seguimientos.
+                      </div>
+                    }
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="text-sm text-slate-500">No hay áreas asignadas para consultar seguimientos.</p>
+        }
+      </section>
+    </div>
+  }
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      class="p-button-outlined"
+      (click)="closeDetailModal()"
+    >Cerrar</button>
+  </ng-template>
+</p-dialog>

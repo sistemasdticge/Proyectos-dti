@@ -54,6 +54,9 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "prebundle": false
+      },
       "configurations": {
         "production": {
           "buildTarget": "sisar:build:production"

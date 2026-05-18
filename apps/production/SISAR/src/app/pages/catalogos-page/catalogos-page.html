@@ -1,0 +1,40 @@
+<p-toast position="top-right"></p-toast>
+
+<section @pageSectionEnter>
+  <lib-catalogos-header
+    class="page-animate-block"
+    [title]="'Catálogos'"
+    [subtitle]="'Administración de áreas, situaciones, tipos de documento, tipos de tema y prioridades.'"
+    [activeLabel]="activeMeta().title"
+    [totalCount]="activeRows().length"
+    [createLabel]="'Nuevo registro'"
+    (create)="openCreate()"
+  />
+
+  <div class="mt-6 page-animate-block">
+    <lib-catalogos-grid
+      [cards]="cards()"
+      [selectedType]="selectedType()"
+      (selectedTypeChange)="selectType($event)"
+    />
+  </div>
+
+  <div class="mt-5 page-animate-block">
+    <lib-catalogos-table
+      [title]="'Administración de ' + activeMeta().title"
+      [rows]="activeRows()"
+      [loading]="isLoading()"
+      (toggleActive)="handleToggle($event)"
+      (edit)="openEdit($event)"
+    />
+  </div>
+</section>
+
+<lib-catalogos-form-modal
+  [visible]="showModal()"
+  (visibleChange)="showModal.set($event)"
+  [typeLabel]="activeMeta().title"
+  [mode]="modalMode()"
+  [initialDescripcion]="selectedRecord()?.descripcion ?? ''"
+  (save)="handleSave($event)"
+/>

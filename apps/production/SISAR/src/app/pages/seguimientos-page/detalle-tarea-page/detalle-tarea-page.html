@@ -1,0 +1,412 @@
+<p-confirmDialog appendTo="body" [baseZIndex]="1300"></p-confirmDialog>
+
+<lib-document-viewer
+  [open]="filePreviewOpen()"
+  [loading]="filePreviewLoading()"
+  [error]="filePreviewError()"
+  [blobUrl]="filePreviewBlobUrl()"
+  [mimeType]="filePreviewMimeType()"
+  [fileName]="filePreviewName()"
+  (closeModal)="closeFilePreview()"
+  (download)="downloadPreviewFile()"
+></lib-document-viewer>
+
+<section class="space-y-5" @pageSectionEnter>
+  <header class="page-animate-block space-y-4 rounded-2xl border border-slate-200 bg-gradient-to-r from-white to-[#fff7f8] px-5 py-4 shadow-sm">
+    <button
+      pButton
+      type="button"
+      class="p-button-outlined !rounded-lg"
+      (click)="goBack()"
+    >
+      <i class="pi pi-arrow-left mr-2"></i>Volver
+    </button>
+
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="min-w-0 border-l-4 border-[#8B1A2E] pl-4">
+        <p class="text-xs font-semibold uppercase tracking-normal text-[#8B1A2E]">Resumen Institucional</p>
+        <h1 class="mt-1 text-2xl font-bold tracking-normal text-[#1f2f4a]">Detalle del tema</h1>
+        <p class="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
+          Revisa la informaci&oacute;n principal del tema, el estado de la asignaci&oacute;n por &aacute;rea y el historial de seguimientos registrados.
+        </p>
+      </div>
+
+      @if (turno(); as turnoData) {
+        <p-tag [severity]="turnoStatusSeverity()" [value]="turnoStatusLabel()"></p-tag>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <section class="page-animate-block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="grid gap-4 md:grid-cols-2">
+        @for (item of [1, 2, 3, 4]; track item) {
+          <article class="min-h-[120px] rounded-2xl border border-slate-200 bg-slate-50/70 p-4 animate-pulse">
+            <div class="h-4 w-24 rounded bg-slate-200"></div>
+            <div class="mt-4 h-6 w-3/4 rounded bg-slate-200"></div>
+            <div class="mt-3 h-4 w-1/2 rounded bg-slate-200"></div>
+          </article>
+        }
+      </div>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="page-animate-block rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 shadow-sm">
+      {{ errorMessage() }}
+    </section>
+  } @else if (turno(); as turnoData) {
+    <section class="page-animate-block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Tema</p>
+          <h2 class="mt-2 text-2xl font-semibold text-slate-800">
+            {{ tema()?.numControl || 'Sin número de control' }}
+          </h2>
+          <p class="mt-3 max-w-3xl whitespace-pre-wrap text-sm leading-6 text-slate-600">
+            {{ tema()?.descripcion || 'Sin descripción registrada' }}
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <p-tag [severity]="prioridadSeverity()" [value]="tema()?.tipoPrioridad || 'Sin prioridad'"></p-tag>
+          <p-tag [severity]="turnoStatusSeverity()" [value]="turnoStatusLabel()"></p-tag>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-animate-block grid gap-4 xl:grid-cols-[1.25fr_0.95fr]">
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
+            <i class="pi pi-file text-base"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Resumen del tema</p>
+            <p class="text-sm text-slate-500">Informaci&oacute;n general para entender el tema asignado.</p>
+          </div>
+        </div>
+
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">N&uacute;mero de control</p>
+            <p class="mt-1 text-base font-semibold text-slate-800">{{ tema()?.numControl || 'Sin número de control' }}</p>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Prioridad</p>
+            <div class="mt-1">
+              <p-tag [severity]="prioridadSeverity()" [value]="tema()?.tipoPrioridad || 'Sin prioridad'"></p-tag>
+            </div>
+          </div>
+
+          <div class="md:col-span-2">
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Descripci&oacute;n</p>
+            <p class="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">
+              {{ tema()?.descripcion || 'Sin descripción registrada' }}
+            </p>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Fecha de vencimiento</p>
+            <p class="mt-1 text-sm text-slate-700">
+              {{ tema()?.fechaVencimiento ? (tema()?.fechaVencimiento | date: 'dd/MM/yyyy HH:mm') : 'Sin registrar' }}
+            </p>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Tipo de tema</p>
+            <p class="mt-1 text-sm text-slate-700">{{ tema()?.tipoTema || 'Sin clasificación' }}</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+            <i class="pi pi-briefcase text-base"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Asignaci&oacute;n</p>
+            <p class="text-sm text-slate-500">Estado actual del turno para tu &aacute;rea.</p>
+          </div>
+        </div>
+
+        <div class="mt-4 space-y-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">&Aacute;rea asignada</p>
+            <p class="mt-1 text-base font-semibold text-slate-800">{{ turnoData.area || 'Área sin nombre' }}</p>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Estado</p>
+            <div class="mt-1">
+              <p-tag [severity]="turnoStatusSeverity()" [value]="turnoStatusLabel()"></p-tag>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Fecha de solventado</p>
+            <p class="mt-1 text-sm text-slate-700">
+              {{ turnoData.fechaSolventado ? (turnoData.fechaSolventado | date: 'dd/MM/yyyy HH:mm') : 'Sin registrar' }}
+            </p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="page-animate-block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-800">Historial de seguimientos</h2>
+          <p class="mt-1 text-sm text-slate-500">Registro cronol&oacute;gico de avances y evidencias de este tema.</p>
+        </div>
+      </div>
+
+      @if (archivoDownloadError()) {
+        <div class="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
+          {{ archivoDownloadError() }}
+        </div>
+      }
+
+      @if (!hasSeguimientos()) {
+        <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-10 text-center">
+          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-400 shadow-sm">
+            <i class="pi pi-history text-lg"></i>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-slate-700">No hay seguimientos todav&iacute;a</h3>
+          <p class="mx-auto mt-2 max-w-xl text-sm text-slate-500">
+            Cuando registres un avance, aparecer&aacute; aqu&iacute;.
+          </p>
+        </div>
+      } @else {
+        <div class="mt-5 space-y-4">
+          @for (seguimiento of seguimientos(); track trackBySeguimientoId($index, seguimiento)) {
+            <article class="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+              <div class="absolute bottom-0 left-6 top-0 hidden w-px bg-slate-200 sm:block"></div>
+              <div class="relative flex flex-wrap items-start gap-4">
+                <div class="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-sky-600 shadow-sm">
+                  <i class="pi pi-comment text-base"></i>
+                </div>
+
+                <div class="min-w-0 flex-1 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <p class="text-sm font-semibold text-slate-800">
+                      {{ seguimiento.fecha | date: 'dd/MM/yyyy HH:mm' }}
+                    </p>
+                    <p-tag
+                      [severity]="seguimientoSituacionSeverity(seguimiento)"
+                      [value]="seguimiento.situacion || 'Sin situación'"
+                    ></p-tag>
+                  </div>
+
+                  <p class="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-700">
+                    {{ seguimiento.descripcion || 'Sin descripción' }}
+                  </p>
+
+                  <div class="mt-4">
+                    <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Archivos</p>
+
+                    @if (seguimiento.archivos.length) {
+                      <ul class="mt-2 space-y-2">
+                        @for (archivo of seguimiento.archivos; track archivo.id) {
+                          <li class="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                            <div class="flex min-w-0 items-start gap-3">
+                              <div class="mt-0.5 text-slate-400">
+                                <i class="pi pi-paperclip"></i>
+                              </div>
+                              <div class="min-w-0">
+                                <p class="truncate text-sm font-medium text-slate-700">{{ archivo.nombreArchivo }}</p>
+                                <p class="text-xs text-slate-400">{{ archivo.tipoDocumento || 'Sin tipo de documento' }}</p>
+                              </div>
+                            </div>
+
+                            <button
+                              pButton
+                              type="button"
+                              class="p-button-outlined p-button-sm !rounded-lg"
+                              [loading]="isArchivoDownloading(archivo)"
+                              [disabled]="!archivo.id || downloadingArchivoKey() !== null"
+                              (click)="viewSeguimientoArchivo(archivo)"
+                            >
+                              Ver archivo
+                            </button>
+                          </li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="mt-2 text-sm text-slate-500">Este seguimiento no tiene archivos adjuntos.</p>
+                    }
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="page-animate-block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+          <i class="pi pi-pencil text-base"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-slate-800">Registrar seguimiento</h2>
+          <p class="text-sm text-slate-500">Agrega un nuevo avance para esta asignaci&oacute;n sin salir del detalle.</p>
+        </div>
+      </div>
+
+      @if (submitMessage(); as message) {
+        <div
+          class="mt-5 rounded-2xl border px-4 py-3 text-sm shadow-sm"
+          [class.border-emerald-200]="message.type === 'success'"
+          [class.bg-emerald-50]="message.type === 'success'"
+          [class.text-emerald-700]="message.type === 'success'"
+          [class.border-red-200]="message.type === 'error'"
+          [class.bg-red-50]="message.type === 'error'"
+          [class.text-red-700]="message.type === 'error'"
+        >
+          {{ message.text }}
+        </div>
+      }
+
+      @if (temaAtendido()) {
+        <div class="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm">
+          Este tema ya fue atendido. No es posible registrar nuevos seguimientos.
+        </div>
+      } @else {
+      <form class="mt-5 space-y-5" [formGroup]="seguimientoForm" (ngSubmit)="submitSeguimiento()">
+        <div class="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-700">Situaci&oacute;n</label>
+            <p-select
+              formControlName="situacionId"
+              [options]="situacionOptions()"
+              optionLabel="label"
+              optionValue="id"
+              [loading]="loadingSituaciones()"
+              [appendTo]="'body'"
+              placeholder="Selecciona una situaci&oacute;n"
+              styleClass="w-full"
+            />
+            @if (showControlInvalid('situacionId')) {
+              <p class="mt-2 text-sm text-red-600">Selecciona una situaci&oacute;n para continuar.</p>
+            } @else if (selectedSituacionSolventada()) {
+              <p class="mt-2 text-sm text-amber-700">
+                Al guardar este seguimiento como atendido, el tema quedar&aacute; finalizado para tu &aacute;rea y ya no podr&aacute;s agregar m&aacute;s seguimientos.
+              </p>
+            }
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-700">
+              Tipo de documento {{ requiresTipoDocumento() ? '(obligatorio)' : '(opcional)' }}
+            </label>
+            <p-select
+              formControlName="tipoDocumentoId"
+              [options]="tipoDocumentoOptions()"
+              optionLabel="label"
+              optionValue="id"
+              [loading]="loadingTipoDocumentoOptions()"
+              [appendTo]="'body'"
+              placeholder="Sin tipo de documento"
+              [showClear]="true"
+              styleClass="w-full"
+            />
+            @if (hasFilesWithoutTipoDocumento()) {
+              <p class="mt-2 text-sm text-red-600">Selecciona el tipo de documento para adjuntar archivos.</p>
+            } @else {
+              <p class="mt-2 text-sm text-slate-400">
+                Sin archivos adjuntos, el tipo de documento no es obligatorio.
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-700">Descripci&oacute;n del seguimiento</label>
+            <textarea
+              pInputTextarea
+              formControlName="descripcion"
+              rows="5"
+              class="w-full resize-y"
+              placeholder="Describe el avance realizado, los hallazgos o la acci&oacute;n enviada por tu &aacute;rea."
+            ></textarea>
+            <div class="mt-2 flex items-center justify-between gap-3">
+              @if (showControlInvalid('descripcion')) {
+                <p class="text-sm text-red-600">La descripci&oacute;n es obligatoria.</p>
+              } @else {
+                <span class="text-sm text-slate-400">Comparte informaci&oacute;n clara y &uacute;til para el historial.</span>
+              }
+              <span class="text-xs text-slate-400">
+                {{ seguimientoForm.controls.descripcion.value.length }}/1500
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-700">Archivos adjuntos</label>
+            <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
+              <input
+                #fileInput
+                type="file"
+                class="hidden"
+                (change)="onFilesSelected($event)"
+              />
+
+              <button
+                pButton
+                type="button"
+                class="p-button-outlined !rounded-lg"
+                (click)="fileInput.click()"
+              >
+                Seleccionar archivos
+              </button>
+
+              <p class="mt-3 text-sm text-slate-500">
+                Puedes agregar un archivo. Si adjuntas archivo, selecciona el tipo de documento.
+              </p>
+
+              @if (selectedFiles().length) {
+                <ul class="mt-4 space-y-2">
+                  @for (file of selectedFiles(); track trackBySelectedFile($index, file)) {
+                    <li class="flex items-start justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2">
+                      <div class="min-w-0">
+                        <p class="truncate text-sm font-medium text-slate-700">{{ file.name }}</p>
+                        <p class="text-xs text-slate-400">{{ formatFileSize(file.size) }}</p>
+                      </div>
+
+                      <button
+                        pButton
+                        type="button"
+                        class="p-button-text p-button-sm"
+                        (click)="removeSelectedFile(file)"
+                      >
+                        Quitar
+                      </button>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="mt-4 text-sm text-slate-400">Todav&iacute;a no has seleccionado archivos.</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <button
+            pButton
+            type="submit"
+            class="!rounded-lg"
+            [loading]="savingSeguimiento()"
+            [disabled]="isSubmitDisabled()"
+          >
+            Guardar seguimiento
+          </button>
+        </div>
+      </form>
+      }
+    </section>
+  }
+</section>

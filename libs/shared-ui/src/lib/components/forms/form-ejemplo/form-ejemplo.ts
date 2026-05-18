@@ -22,9 +22,8 @@ export class FormEjemplo {
   onSubmit() {
     if (this.form.valid) {
       console.log('Formulario enviado:', this.form.value);
-      alert('¡Formulario enviado correctamente!');
     } else {
-      alert('Por favor, completa todos los campos correctamente.');
+      console.warn('Formulario invalido:', this.form.value);
     }
   }
 

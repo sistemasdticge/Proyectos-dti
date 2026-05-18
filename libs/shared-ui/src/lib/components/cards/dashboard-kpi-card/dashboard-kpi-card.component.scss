@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.kpi-card-surface {
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, rgba(143, 29, 47, 0.06), rgba(164, 35, 53, 0));
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+.kpi-card-surface:hover::after {
+  opacity: 1;
+}
+
+/*
+  GUIA RAPIDA DE PERSONALIZACION (SCSS DE LA CARD KPI)
+  1) .p-tag: tamano general del indicador de tendencia.
+  2) .kpi-trend-up: colores para tendencia positiva.
+  3) .kpi-trend-down: colores para tendencia negativa.
+  4) .kpi-trend-neutral: colores para estado neutro.
+  NOTA: usamos ::ng-deep porque p-tag es un componente de PrimeNG.
+*/
+:host ::ng-deep .p-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 0.45rem;
+  padding: 0.12rem 0.42rem;
+}
+
+/* Fondo y texto de tendencia positiva */
+:host ::ng-deep .p-tag.kpi-trend-up {
+  background: #ecfdf3;
+  color: #16a34a;
+}
+
+/* Fondo y texto de tendencia negativa */
+:host ::ng-deep .p-tag.kpi-trend-down {
+  background: #fff1f2;
+  color: #ef4444;
+}
+
+/* Fondo y texto para estado neutro */
+:host ::ng-deep .p-tag.kpi-trend-neutral {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kpi-card-surface::after {
+    transition: none !important;
+  }
+}

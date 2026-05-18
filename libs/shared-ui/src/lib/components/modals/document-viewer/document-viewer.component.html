@@ -1,0 +1,76 @@
+<p-dialog
+  appendTo="body"
+  [visible]="open()"
+  [modal]="true"
+  [baseZIndex]="12000"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [dismissableMask]="false"
+  [contentStyle]="{ padding: '0', overflow: 'hidden' }"
+  [style]="{ width: 'min(1100px, calc(100vw - 2rem))' }"
+  styleClass="doc-viewer-dialog"
+>
+  <section class="doc-viewer-panel">
+    <header class="doc-viewer-header">
+      <div>
+        <h3 class="doc-viewer-title">Vista previa del archivo</h3>
+        <p class="doc-viewer-name">{{ fileName() || 'Archivo adjunto' }}</p>
+      </div>
+      <button
+        type="button"
+        class="doc-viewer-close"
+        (click)="closeModal.emit()"
+        aria-label="Cerrar visor"
+      >
+        Cerrar
+      </button>
+    </header>
+
+    <div class="doc-viewer-frame-wrap">
+      @if (loading()) {
+        <div class="doc-viewer-status">Cargando vista previa...</div>
+      } @else if (error()) {
+        <div class="doc-viewer-status doc-viewer-status--error">
+          {{ error() }}
+        </div>
+      } @else if (safeUrl() && isPdf()) {
+        <iframe
+          class="doc-viewer-frame"
+          [src]="safeUrl()"
+          title="Vista previa del archivo"
+        ></iframe>
+      } @else if (blobUrl() && isImage()) {
+        <div class="doc-viewer-image-wrap">
+          <img
+            class="doc-viewer-image"
+            [src]="blobUrl() || ''"
+            [alt]="fileName() || 'Vista previa del archivo'"
+          />
+        </div>
+      } @else if (blobUrl()) {
+        <div class="doc-viewer-status">
+          Este tipo de archivo no puede previsualizarse. Puedes descargarlo para revisarlo.
+        </div>
+      }
+    </div>
+
+    <footer class="doc-viewer-actions">
+      <button
+        type="button"
+        class="doc-viewer-btn doc-viewer-btn--secondary"
+        (click)="closeModal.emit()"
+      >
+        Cerrar
+      </button>
+      <button
+        type="button"
+        class="doc-viewer-btn doc-viewer-btn--primary"
+        [disabled]="loading() || !blobUrl()"
+        (click)="download.emit()"
+      >
+        Descargar
+      </button>
+    </footer>
+  </section>
+</p-dialog>

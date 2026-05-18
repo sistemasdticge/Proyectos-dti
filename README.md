@@ -23,6 +23,7 @@ Aquí vive código compartido.
 
 - Guía de estilos y personalización de componentes (Tailwind + PrimeNG): `docs/GUIA-TAILWIND-PRIMENG.md`
 - Guía para actualizaciones futuras de Nx y Angular: `docs/GUIA-ACTUALIZACION-DEPENDENCIAS.md`
+- Guía de consumo y personalización del sidebar: `docs/GUIA-SIDEBAR-CONSUMO-PERSONALIZACION.md`
 
 ---
 
@@ -31,7 +32,8 @@ Aquí vive código compartido.
 1. **No crear componentes reutilizables dentro de `apps/`**.
 2. Los componentes de negocio compartidos se crean en `libs/shared-ui`.
 3. Todo componente nuevo debe exportarse en `libs/shared-ui/src/index.ts`.
-4. Todo componente nuevo debe probarse primero en `pruebasdti`.
+4. Todo componente nuevo debe probarse primero en `pruebasdti o entorno de pruebsas que prefieras`.
+5. Todo componente nuevo de `shared-ui` debe incluir su guía de consumo en `docs/`.
 
 ---
 

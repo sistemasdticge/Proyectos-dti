@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.usuarios-page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.usuarios-hero,
+.usuarios-table-card {
+  backdrop-filter: blur(10px);
+}
+
+:host ::ng-deep .usuarios-table {
+  .p-datatable-thead > tr > th {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    background: #ffffff;
+    border-color: rgb(226 232 240);
+  }
+
+  .p-datatable-tbody > tr > td {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-color: rgb(241 245 249);
+  }
+}
+
+:host ::ng-deep .usuarios-confirm-dialog {
+  width: min(92vw, 28rem);
+
+  .p-dialog-header {
+    padding: 1.25rem 1.25rem 0.75rem;
+    color: #1f2f4a;
+  }
+
+  .p-dialog-content {
+    padding: 0 1.25rem 1rem;
+    color: #475569;
+  }
+
+  .p-confirmdialog-icon {
+    color: #dc2626;
+  }
+
+  .p-dialog-footer {
+    padding: 0.75rem 1.25rem 1.25rem;
+  }
+}

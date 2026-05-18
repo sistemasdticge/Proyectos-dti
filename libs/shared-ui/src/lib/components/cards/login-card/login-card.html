@@ -1,5 +1,5 @@
 <div class="login-card-shell">
-  <form class="login-card" novalidate>
+  <form class="login-card" novalidate (submit)="requestLogin($event)">
     <h1>Bienvenido</h1>
     <img class="login-card-brand-mobile" src="/images/login/SISAR2.png" alt="SISAR" />
     <p>Ingrese sus credenciales para continuar.</p>
@@ -10,7 +10,14 @@
       </svg>
       <label for="username">Usuario</label>
     </div>
-    <input id="username" type="text" placeholder="Correo institucional" />
+    <input
+      id="username"
+      type="text"
+      placeholder="Correo institucional"
+      [value]="username()"
+      [disabled]="loading()"
+      (input)="onUsernameInput(($any($event.target)).value)"
+    />
 
     <div class="password-header">
       <div class="field-label field-label-password">
@@ -22,10 +29,18 @@
     </div>
 
     <div class="password-wrapper">
-      <input id="password" [type]="showPassword() ? 'text' : 'password'" placeholder="Contraseña" />
+      <input
+        id="password"
+        [type]="showPassword() ? 'text' : 'password'"
+        placeholder="Contrasena"
+        [value]="password()"
+        [disabled]="loading()"
+        (input)="onPasswordInput(($any($event.target)).value)"
+      />
       <button
         class="toggle-password"
         type="button"
+        [disabled]="loading()"
         (click)="togglePasswordVisibility()"
         [attr.aria-label]="showPassword() ? 'Ocultar contrasena' : 'Mostrar contrasena'"
       >
@@ -67,11 +82,15 @@
       </button>
     </div>
 
+    @if (validationMessage() || errorMessage()) {
+      <div class="login-error" role="alert">{{ validationMessage() || errorMessage() }}</div>
+    }
+
     <a class="forgot-password-link" href="#">¿Olvidaste la contraseña?</a>
 
-    <button class="login-button" type="button" (click)="requestLogin()">
+    <button class="login-button" type="submit" [disabled]="loading()">
       <span class="button-content">
-        <span>Iniciar sesion</span>
+        <span>{{ loading() ? 'Validando...' : 'Iniciar sesion' }}</span>
         <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M13.75 5.75a1 1 0 1 1 1.5-1.32l5 5.75a1 1 0 0 1 0 1.14l-5 5.75a1 1 0 0 1-1.5-1.32L17.18 12l-3.43-3.93Z" />
           <path d="M4 12a1 1 0 0 1 1-1h13.5a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Z" />

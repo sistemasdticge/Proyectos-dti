@@ -1,6 +1,6 @@
 :host {
   display: block;
-  --detail-color: #8c143f;
+  --detail-color: #8f1d2f;
   --detail-color-hover: #2b2b2b;
   width: min(500px, 100%);
   margin-left:30px;
@@ -172,8 +172,8 @@ input:focus {
   margin-top: 2rem;
   border: 0;
   border-radius: 10px;
-  background: linear-gradient(to left, #920036 10%, #8d133e 90%);
-  box-shadow: 0 10px 18px rgb(140 20 63 / 22%);
+  background: linear-gradient(145deg, #8f1d2f 8%, #a42335 88%);
+  box-shadow: 0 10px 18px rgba(143, 29, 47, 0.24);
   color: #ffffff;
   font-size: 1.02rem;
   font-weight: 700;
@@ -186,11 +186,28 @@ input:focus {
 
 .login-button:hover {
   transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 13px 20px rgb(140 20 63 / 27%);
+  box-shadow: 0 13px 20px rgba(143, 29, 47, 0.3);
 }
 
 .login-button:active {
   transform: translateY(0) scale(0.99);
+}
+
+.login-button:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 8px 14px rgba(143, 29, 47, 0.16);
+}
+
+.login-error {
+  border: 1px solid #f0a3a3;
+  background: #fff1f1;
+  color: #7f1d1d;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 @keyframes cardReveal {
@@ -319,4 +336,6 @@ input:focus {
     transition: none !important;
     transform: none !important;
   }
+
 }
+

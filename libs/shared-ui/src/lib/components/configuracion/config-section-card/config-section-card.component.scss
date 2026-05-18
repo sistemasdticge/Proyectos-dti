@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+.config-card {
+  transition: box-shadow 180ms ease;
+}
+
+.config-card:hover {
+  box-shadow: 0 8px 20px rgb(15 23 42 / 0.08);
+}

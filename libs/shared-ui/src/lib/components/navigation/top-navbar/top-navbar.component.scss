@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.top-navbar-search {
+  animation: topNavbarSearchEnter 420ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+}
+
+.top-navbar-actions {
+  animation: topNavbarActionsEnter 430ms cubic-bezier(0.22, 1, 0.36, 1) 130ms both;
+}
+
+.top-navbar-user {
+  animation: topNavbarUserEnter 460ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+}
+
+/*
+  Estilos de compatibilidad para PrimeNG input dentro del navbar.
+  El layout principal vive en clases Tailwind del HTML.
+*/
+:host ::ng-deep .p-inputtext {
+  box-shadow: none;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+}
+
+:host ::ng-deep .top-navbar-search .top-navbar-search-input.p-inputtext {
+  width: 100%;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  color: #ffffff !important;
+  font-size: 0.86rem;
+  line-height: 1.2;
+}
+
+:host ::ng-deep .top-navbar-search .top-navbar-search-input.p-inputtext::placeholder {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+:host ::ng-deep .top-navbar-search .top-navbar-search-input.p-inputtext:focus {
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .p-avatar {
+  width: 30px;
+  height: 30px;
+}
+
+@keyframes topNavbarSearchEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes topNavbarActionsEnter {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes topNavbarUserEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-navbar-search,
+  .top-navbar-actions,
+  .top-navbar-user {
+    animation: none !important;
+  }
+}

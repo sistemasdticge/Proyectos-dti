@@ -1,0 +1,50 @@
+<!--
+  Tarjeta KPI reusable con PrimeNG + Tailwind.
+  PrimeNG se usa en p-tag para indicador de tendencia.
+
+  QUE PUEDES PERSONALIZAR EN ESTA PLANTILLA:
+  1) Contenedor principal (article): borde, sombra, radio, padding, hover.
+  2) Titulo (h3): tamano, color y peso tipografico.
+  3) Icono superior: icono real (Input icon), color y fondo por tendencia.
+  4) Valor principal: tamano y color del numero KPI.
+  5) p-tag: texto, icono de flecha y color por estado (up/down/neutral).
+-->
+<!--
+  Contenedor principal de la card.
+  Si quieres cards mas compactas, reduce p-4.
+  Si quieres mas elevacion, aumenta shadow-sm a shadow-md.
+-->
+<article
+  class="kpi-card-surface rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:-translate-y-px hover:shadow-md"
+  @kpiCardEnter
+>
+  <!-- Encabezado de la card: titulo + icono -->
+  <div class="mb-2 flex items-start justify-between gap-3">
+    <!-- title viene del Input [title] -->
+    <h3 class="text-sm font-semibold text-[#60758f]">{{ title }}</h3>
+
+    <!--
+      Bloque de icono:
+      - iconSurfaceClass(): pinta el fondo segun tendencia.
+      - iconToneClass(): pinta el color del icono segun tendencia.
+      - icon (Input): define que icono se renderiza (PrimeIcons).
+    -->
+    <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg" [class]="iconSurfaceClass()">
+      <i class="pi text-[0.86rem]" [class]="icon + ' ' + iconToneClass()"></i>
+    </span>
+  </div>
+
+  <!-- Valor KPI principal (Input [value]) -->
+  <p class="text-[1.95rem] font-extrabold tracking-normal leading-none text-[#1f2f4a]">{{ value }}</p>
+
+  <!--
+    Indicador de tendencia con PrimeNG p-tag:
+    - trendIcon(): flecha arriba/abajo/neutral.
+    - trendSeverity(): color base PrimeNG.
+    - trendClass(): detalle fino de color en SCSS.
+    - trendLabel (Input): texto mostrado al usuario.
+  -->
+  <div class="mt-2">
+    <p-tag [icon]="trendIcon()" [severity]="trendSeverity()" [styleClass]="trendClass()" [value]="trendLabel"></p-tag>
+  </div>
+</article>

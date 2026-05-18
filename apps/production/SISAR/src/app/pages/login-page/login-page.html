@@ -17,6 +17,10 @@
 	</section>
 
 	<section class="login-form-panel">
-		<lib-login-card (loginRequested)="navigateToDashboard()"></lib-login-card>
+		<lib-login-card
+			[loading]="loading()"
+			[errorMessage]="errorMessage()"
+			(loginRequested)="onLoginRequested($event)"
+		></lib-login-card>
 	</section>
 </main>

@@ -1,0 +1,14 @@
+<div class="flex items-center justify-between mt-2">
+  <p class="text-sm text-slate-500">
+    Mostrando {{ start }}&ndash;{{ end }} de {{ total }} temas
+  </p>
+  <p-paginator
+    [rows]="pageSize"
+    [totalRecords]="total"
+    [first]="first"
+    (onPageChange)="onPageChange($event)"
+    [showFirstLastIcon]="true"
+    [showPageLinks]="true"
+    styleClass="!p-0 !bg-transparent"
+  />
+</div>

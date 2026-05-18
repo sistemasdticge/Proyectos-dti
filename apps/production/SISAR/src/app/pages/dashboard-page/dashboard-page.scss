@@ -1,11 +1,59 @@
 :host {
   display: block;
-  min-height: 100vh;
-  background: #dce0e5;
 }
 
-div {
+.dashboard-shell {
   display: flex;
-  gap: 1rem;
-  padding: 1rem;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.dashboard-header-wrap {
+  border-radius: 0.85rem;
+  border: 1px solid #d7dee8;
+  background: linear-gradient(90deg, #ffffff 0%, #fff7f8 100%);
+  padding: 0.8rem 0.95rem;
+  box-shadow: 0 8px 22px -24px rgba(15, 23, 42, 0.45);
+}
+
+.dashboard-kpi-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.dashboard-table-wrap {
+  border-radius: 0.85rem;
+  overflow: hidden;
+}
+
+.dashboard-summary-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.dashboard-activity-card {
+  border-radius: 0.85rem;
+}
+
+.dashboard-section-header {
+  background: linear-gradient(90deg, #f8fafc 0%, #fff7f8 100%);
+}
+
+@media (min-width: 768px) {
+  .dashboard-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .dashboard-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .dashboard-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
 }

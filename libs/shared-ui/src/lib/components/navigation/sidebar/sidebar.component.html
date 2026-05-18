@@ -1,0 +1,159 @@
+<!--
+  Sidebar migrado a Tailwind + PrimeNG.
+  - Tailwind: layout, colores, spacing y transiciones.
+  - PrimeNG: pRipple (feedback visual) + p-badge (notificaciones).
+-->
+<div
+  class="sidebar-shell-enter h-screen min-h-screen transition-[width] ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+  [style.width.px]="collapsed() ? 90 : 280"
+  [style.min-width.px]="collapsed() ? 90 : 280"
+  [style.transition-duration.ms]="animationDurationMs"
+  [style.pointer-events]="animating() ? 'none' : 'auto'"
+>
+  <!--
+    Estructura principal del panel.
+    El gradiente y borde reproducen el look original que ya aprobaste.
+  -->
+  <aside
+    @sidebarPanelEnter
+    class="relative flex h-full flex-col gap-3 overflow-hidden rounded-b-2xl rounded-t-none border-r border-[#e6e3e3] bg-white px-3 py-4 text-slate-600"
+    aria-label="Menu lateral principal"
+  >
+    <!-- Header: logo + texto de marca + boton colapsar -->
+    <header class="flex min-h-12 items-center">
+      <div class="flex min-w-0 items-center gap-3">
+        <!--
+          Logo:
+          - Si existe logoSrc() se pinta la imagen del sistema.
+          - Si no, se usa la inicial de logoText() como fallback.
+        -->
+        <div
+          class="grid h-12 w-12 shrink-0 place-content-center overflow-hidden rounded-xl bg-gradient-to-br from-[#bc2b4d] to-[#8c1633] text-white shadow-[0_10px_20px_rgba(162,31,61,0.28)]"
+          aria-hidden="true"
+        >
+          @if (logoSrc()) {
+            <img class="h-full w-full object-cover" [src]="logoSrc()!" [alt]="logoAlt()" />
+          } @else {
+            <span class="text-[0.98rem] font-bold uppercase">{{ logoText().slice(0, 1) }}</span>
+          }
+        </div>
+
+        <!-- Texto de marca; se comprime en modo colapsado -->
+        <div
+          class="min-w-0 max-w-[145px] translate-x-0 opacity-100 transition-all duration-300"
+          [style.max-width.px]="collapsed() ? 0 : 145"
+          [style.transform]="collapsed() ? 'translateX(-4px)' : 'translateX(0)'"
+          [style.opacity]="collapsed() ? 0 : 1"
+          [style.pointer-events]="collapsed() ? 'none' : 'auto'"
+        >
+          <h2 class="m-0 whitespace-nowrap text-[2rem] font-bold tracking-[0.01em] text-slate-600">{{ title() }}</h2>
+          <p class="m-0 mt-0.5 whitespace-nowrap text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-slate-400">Panel principal</p>
+        </div>
+      </div>
+
+      <!-- Boton interno para abrir/cerrar; pRipple agrega feedback de PrimeNG -->
+      <button
+        pRipple
+        type="button"
+        class="ml-auto grid h-8 w-8 shrink-0 place-content-center rounded-full border border-[#dde3ee] bg-white/90 text-slate-500 shadow-[0_4px_10px_rgba(37,46,62,0.10)] backdrop-blur transition-all duration-200 hover:-translate-y-px hover:text-[#a21f3d] hover:shadow-[0_8px_16px_rgba(162,31,61,0.16)]"
+        [style.margin-left]="collapsed() ? '0.5rem' : 'auto'"
+        [attr.aria-label]="collapsed() ? 'Expandir sidebar' : 'Colapsar sidebar'"
+        (click)="toggleCollapse()"
+        (keydown)="onToggleKeydown($event)"
+      >
+        <i class="pi" [class.pi-angle-right]="collapsed()" [class.pi-angle-left]="!collapsed()"></i>
+      </button>
+    </header>
+
+    <!-- Navegacion principal del menu -->
+    <nav class="flex flex-col gap-1.5" aria-label="Secciones" @sidebarItemsEnter>
+      @for (item of items(); track item.label) {
+        <button
+          pRipple
+          type="button"
+          class="sidebar-nav-item flex h-[2.6rem] w-full items-center rounded-2xl border-0 bg-transparent px-3 text-left text-slate-600 transition-all duration-200 hover:bg-[rgba(162,31,61,0.09)] hover:text-slate-600"
+          [style.justify-content]="collapsed() ? 'center' : 'flex-start'"
+          [style.padding-left.rem]="collapsed() ? 0 : 0.75"
+          [style.padding-right.rem]="collapsed() ? 0 : 0.75"
+          [style.column-gap.rem]="collapsed() ? 0 : 0.75"
+          [style.background-color]="isItemActive(item) ? '#e9dfe3' : null"
+          [style.color]="isItemActive(item) ? '#a21f3d' : null"
+          [style.box-shadow]="isItemActive(item) ? 'inset 0 0 0 1px rgba(162,31,61,0.09)' : null"
+          [attr.title]="collapsed() ? item.label : null"
+          (click)="onItemClick(item)"
+        >
+          <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center">
+            <i class="text-base leading-none" [class]="item.icon || 'pi pi-circle'"></i>
+          </span>
+
+          <span
+            class="max-w-[150px] translate-x-0 overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold opacity-100 transition-all duration-300"
+            [style.max-width.px]="collapsed() ? 0 : 150"
+            [style.transform]="collapsed() ? 'translateX(-4px)' : 'translateX(0)'"
+            [style.opacity]="collapsed() ? 0 : 1"
+            [style.pointer-events]="collapsed() ? 'none' : 'auto'"
+          >
+            {{ item.label }}
+          </span>
+
+          <!-- Badge PrimeNG opcional por item -->
+          @if (item.badge && !collapsed()) {
+            <p-badge class="ml-auto" [value]="item.badge" severity="danger"></p-badge>
+          }
+        </button>
+      }
+    </nav>
+
+    <!-- Separador de bloque secundario -->
+    <div class="mt-1 h-px w-full bg-[#dde3ee]"></div>
+    <p
+      class="m-0 translate-x-0 text-[0.67rem] font-extrabold uppercase tracking-[0.12em] text-slate-400 transition-all duration-300"
+      [style.max-width.px]="collapsed() ? 0 : 160"
+      [style.transform]="collapsed() ? 'translateX(-4px)' : 'translateX(0)'"
+      [style.opacity]="collapsed() ? 0 : 1"
+      [style.pointer-events]="collapsed() ? 'none' : 'auto'"
+    >
+      ADMINISTRACION
+    </p>
+
+    <!-- Bloque de cerrar sesion (encima de estado del sistema) -->
+    @if (showLogoutButton()) {
+      <button
+        pRipple
+        type="button"
+        class="flex h-[2.5rem] w-full items-center rounded-2xl border border-[#f1d8de] bg-[#fff5f7] px-3 text-left text-[#a21f3d] transition-all duration-200 hover:bg-[#fdecef]"
+        [style.justify-content]="collapsed() ? 'center' : 'flex-start'"
+        [style.padding-left.rem]="collapsed() ? 0 : 0.75"
+        [style.padding-right.rem]="collapsed() ? 0 : 0.75"
+        [style.column-gap.rem]="collapsed() ? 0 : 0.65"
+        [attr.title]="collapsed() ? logoutLabel() : null"
+        (click)="onLogoutClick()"
+      >
+        <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center">
+          <i class="text-base leading-none" [class]="logoutIcon()"></i>
+        </span>
+
+        <span
+          class="max-w-[150px] translate-x-0 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold opacity-100 transition-all duration-300"
+          [style.max-width.px]="collapsed() ? 0 : 150"
+          [style.transform]="collapsed() ? 'translateX(-4px)' : 'translateX(0)'"
+          [style.opacity]="collapsed() ? 0 : 1"
+          [style.pointer-events]="collapsed() ? 'none' : 'auto'"
+        >
+          {{ logoutLabel() }}
+        </span>
+      </button>
+    }
+
+    <!-- Tarjeta de estado desacoplada y configurable -->
+    @if (showSystemStatus()) {
+      <lib-sidebar-status
+        [collapsed]="collapsed()"
+        [title]="systemStatusTitle()"
+        [message]="systemStatusMessage()"
+        [percentage]="systemStatusPercentage()"
+        [icon]="systemStatusIcon()"
+      ></lib-sidebar-status>
+    }
+  </aside>
+</div>

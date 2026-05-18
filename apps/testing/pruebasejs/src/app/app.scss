@@ -1,0 +1,28 @@
+
+.parent {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.div1 {
+    grid-row:  100% / 7;
+    background: red;
+}
+
+.div2 {
+    grid-column: span 4 / span 4;
+    grid-row: span 6 / span 6;
+    grid-column-start: 2;
+    grid-row-start: 2;
+    background: blue;
+}
+
+.div3 {
+    grid-column: span 4 / span 4;
+    grid-column-start: 2;
+    grid-row-start: 1;
+    background: green;
+}
+

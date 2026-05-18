@@ -7,7 +7,9 @@
 	min-height: 100vh;
 	display: grid;
 	grid-template-columns: 40% 60%;
-	background: #dce0e5;
+	background:
+		radial-gradient(circle at 90% 6%, rgba(162, 31, 61, 0.08), transparent 38%),
+		linear-gradient(180deg, #eef1f5 0%, #e6ebf1 100%);
 	overflow: hidden;
 }
 
@@ -49,10 +51,10 @@
 
 .login-brand-panel {
 	position: relative;
-	background: linear-gradient(to left, #920036 50%, #8d133e 600%);
+	background: linear-gradient(to left, #a42335 72%, #b31f35 100%);
 	z-index: 2;
 	isolation: isolate;
-	box-shadow: inset -18px 0 28px rgba(58, 7, 25, 0.18);
+	box-shadow: inset -18px 0 28px rgba(76, 7, 24, 0.18);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -67,9 +69,9 @@
 	z-index: 1;
 	width: 300px;
 	height: 180%;
-	background: linear-gradient(to left, #920036 10%, #920036 90%);
+	background: linear-gradient(to left, #a42335 10%, #a42335 92%);
 	border-radius: 0 100% 100% 0 / 0 50% 50% 0;
-	box-shadow: 16px 0 26px rgba(58, 7, 25, 0.2);
+	box-shadow: 16px 0 26px rgba(76, 7, 24, 0.2);
 	pointer-events: none;
 	animation: waveDrift 8s ease-in-out infinite;
 }

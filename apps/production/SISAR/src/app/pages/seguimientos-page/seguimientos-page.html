@@ -1,0 +1,200 @@
+<section class="space-y-5" @pageSectionEnter>
+  <header class="page-animate-block rounded-2xl border border-slate-200 bg-gradient-to-r from-white to-[#fff7f8] px-5 py-4 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="min-w-0 border-l-4 border-[#8B1A2E] pl-4">
+        <p class="text-xs font-semibold uppercase tracking-normal text-[#8B1A2E]">Resumen Institucional</p>
+        <h1 class="mt-1 text-2xl font-bold tracking-normal text-[#1f2f4a]">Mis temas</h1>
+        <p class="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
+          Consulta los temas asignados a tu área y revisa rápidamente cuáles siguen pendientes o ya fueron entregados.
+        </p>
+      </div>
+
+      @if (areaId() && areaLabel()) {
+        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+          <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Área asignada</span>
+          <span class="mt-1 block font-medium text-slate-700">{{ areaLabel() }}</span>
+        </div>
+      } @else if (selectedAreaLabel()) {
+        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+          <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Área consultada</span>
+          <span class="mt-1 block font-medium text-slate-700">{{ selectedAreaLabel() }}</span>
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (showAreaSelector()) {
+    <section class="page-animate-block rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div class="max-w-2xl">
+          <h2 class="text-base font-semibold text-amber-900">Consulta temas por área</h2>
+          <p class="mt-1 text-sm text-amber-800">
+            Tu cuenta de superusuario no tiene un área asignada. Selecciona un área para visualizar sus temas asignados durante desarrollo.
+          </p>
+        </div>
+
+        <div class="w-full max-w-md">
+          <label class="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-amber-800">Área</label>
+          <p-select
+            [options]="areaOptions()"
+            optionLabel="label"
+            optionValue="id"
+            [loading]="loadingAreaOptions()"
+            [appendTo]="'body'"
+            [ngModel]="selectedAreaId()"
+            (ngModelChange)="onSelectedAreaChange($event)"
+            placeholder="Selecciona un área..."
+            styleClass="w-full"
+          />
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (loading()) {
+    <section class="page-animate-block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        @for (item of [1, 2, 3]; track item) {
+          <article class="min-h-[220px] rounded-2xl border border-slate-200 bg-slate-50/70 p-4 animate-pulse">
+            <div class="h-4 w-24 rounded bg-slate-200"></div>
+            <div class="mt-4 h-6 w-2/3 rounded bg-slate-200"></div>
+            <div class="mt-3 h-4 w-1/2 rounded bg-slate-200"></div>
+            <div class="mt-5 h-16 w-full rounded bg-slate-200"></div>
+            <div class="mt-5 h-10 w-full rounded bg-slate-200"></div>
+          </article>
+        }
+      </div>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="page-animate-block rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 shadow-sm">
+      {{ errorMessage() }}
+    </section>
+  } @else if (infoMessage()) {
+    <section class="page-animate-block rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800 shadow-sm">
+      {{ infoMessage() }}
+    </section>
+  } @else if (isEmpty()) {
+    <section class="page-animate-block rounded-2xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
+      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+        <i class="pi pi-inbox text-xl"></i>
+      </div>
+      <h2 class="mt-4 text-lg font-semibold text-slate-700">
+        {{ selectedAreaId() && !areaId() ? 'No hay temas asignados para esta área' : 'No tienes temas asignados' }}
+      </h2>
+      <p class="mx-auto mt-2 max-w-xl text-sm text-slate-500">
+        {{ emptyMessage() }}
+      </p>
+    </section>
+  } @else {
+    <section class="page-animate-block grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Resumen</p>
+        <p class="mt-3 text-3xl font-semibold text-slate-800">{{ turnos().length }}</p>
+        <p class="mt-2 text-sm text-slate-500">Total de temas asignados a tu área.</p>
+      </article>
+
+      <article class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">Pendientes</p>
+        <p class="mt-3 text-3xl font-semibold text-amber-900">{{ pendingCount() }}</p>
+        <p class="mt-2 text-sm text-amber-800">Temas que aún requieren atención o entrega.</p>
+      </article>
+
+      <article class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.12em] text-emerald-700">Solventadas</p>
+        <p class="mt-3 text-3xl font-semibold text-emerald-900">{{ deliveredCount() }}</p>
+        <p class="mt-2 text-sm text-emerald-800">Temas ya marcados como solventados.</p>
+      </article>
+    </section>
+
+    <section class="page-animate-block space-y-4">
+      @for (turno of turnos(); track trackByTurnoId($index, turno)) {
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="text-lg font-semibold text-slate-800">
+                      {{ temaForTurno(turno)?.numControl || 'Tema asignado' }}
+                    </h2>
+                    <p-tag
+                      [severity]="prioridadSeverityForTurno(turno)"
+                      [value]="temaForTurno(turno)?.tipoPrioridad || 'Sin prioridad'"
+                    ></p-tag>
+                    <p-tag
+                      [severity]="turnoStatusSeverity(turno)"
+                      [value]="turnoStatusLabel(turno)"
+                    ></p-tag>
+                  </div>
+
+                  <p class="mt-2 text-sm font-medium text-slate-600">
+                    {{ temaForTurno(turno)?.tipoTema || 'Tema sin clasificación' }}
+                  </p>
+                </div>
+              </div>
+
+              <p class="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-600">
+                {{ shortDescriptionForTurno(turno) }}
+              </p>
+
+              <dl class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div>
+                  <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Número de control</dt>
+                  <dd class="mt-1 text-sm font-medium text-slate-700">
+                    {{ temaForTurno(turno)?.numControl || 'Pendiente por cargar' }}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Tipo de tema</dt>
+                  <dd class="mt-1 text-sm text-slate-600">
+                    {{ temaForTurno(turno)?.tipoTema || 'Sin clasificación' }}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Área</dt>
+                  <dd class="mt-1 text-sm font-medium text-slate-700">{{ turno.area || 'Área sin nombre' }}</dd>
+                </div>
+
+                <div>
+                  <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Estado</dt>
+                  <dd class="mt-1 text-sm text-slate-600">{{ turnoStatusLabel(turno) }}</dd>
+                </div>
+
+                <div>
+                  <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Fecha de vencimiento</dt>
+                  <dd class="mt-1 text-sm text-slate-600">
+                    {{
+                      temaForTurno(turno)?.fechaVencimiento
+                        ? (temaForTurno(turno)?.fechaVencimiento | date: 'dd/MM/yyyy HH:mm')
+                        : 'Sin registrar'
+                    }}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Fecha de solventado</dt>
+                  <dd class="mt-1 text-sm text-slate-600">
+                    {{ turno.fechaSolventado ? (turno.fechaSolventado | date: 'dd/MM/yyyy HH:mm') : 'Sin registrar' }}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="flex shrink-0 items-center gap-2">
+              <button
+                pButton
+                type="button"
+                class="p-button-outlined !rounded-lg"
+                (click)="onViewDetail(turno)"
+              >
+                Ver detalle
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </section>
+  }
+</section>

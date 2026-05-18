@@ -1,0 +1,41 @@
+<p-dialog
+  [visible]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [appendTo]="'body'"
+  [baseZIndex]="1200"
+  [style]="{ width: '520px', maxWidth: '95vw' }"
+  [header]="dialogTitle"
+  (visibleChange)="visibleChange.emit($event)"
+>
+  <form [formGroup]="form" class="flex flex-col gap-4 pt-2" (ngSubmit)="submit()">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-slate-700"
+        >Descripción <span class="text-red-500">*</span></label
+      >
+      <textarea
+        pTextarea
+        formControlName="descripcion"
+        rows="4"
+        class="w-full"
+        placeholder="Descripción del registro..."
+      ></textarea>
+      @if (form.controls.descripcion.invalid && form.controls.descripcion.touched) {
+        <span class="text-xs text-red-500">La descripción es requerida.</span>
+      }
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <button pButton type="button" class="p-button-outlined" (click)="close()">Cancelar</button>
+      <button
+        pButton
+        type="button"
+        class="!bg-[#8B1A2E] !border-[#8B1A2E] hover:!bg-[#6e1525]"
+        (click)="submit()"
+      >Guardar</button>
+    </div>
+  </ng-template>
+</p-dialog>

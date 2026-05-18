@@ -1,0 +1,67 @@
+<!--
+    Layout principal de la app de pruebas:
+    - Izquierda: sidebar reutilizable (shared-ui).
+    - Derecha: contenido de rutas con router-outlet.
+-->
+<div class="flex min-h-screen bg-slate-100">
+        <!--
+            Consumo del componente de libreria:
+            - title/logoText: personalizacion de encabezado.
+            - items: lista del menu definida en app.ts.
+            - animationDurationMs: velocidad de animacion del colapso.
+            - itemSelected: evento para que el contenedor aplique logica de negocio.
+        -->
+    <!--
+        [(collapsed)] es el binding bidireccional:
+        - El corchete [ ] pasa isSidebarCollapsed como entrada al sidebar.
+        - El parentesis ( ) escucha cuando el sidebar cambia el estado.
+        - Resultado: sidebar y contenedor siempre estan sincronizados.
+
+        PERSONALIZACION EN OTROS PROYECTOS:
+        - app.ts: cambia sidebarTitle para el nombre del sistema.
+        - app.ts: cambia sidebarLogoSrc con ruta de assets del proyecto.
+        - app.ts: cambia sidebarLogoAlt para accesibilidad segun el sistema.
+        - app.ts: si sidebarLogoSrc es null, se usa sidebarLogoText como fallback.
+        - app.ts: personaliza systemStatusTitle/systemStatusMessage/systemStatusPercentage.
+
+        Ejemplo para proyecto real:
+        sidebarLogoSrc = 'assets/images/logo-sistema.png'
+        sidebarLogoAlt = 'Logo del Sistema X'
+    -->
+    <lib-sidebar
+        class="shrink-0"
+        [title]="sidebarTitle"
+        [logoText]="sidebarLogoText"
+        [logoSrc]="sidebarLogoSrc"
+        [logoAlt]="sidebarLogoAlt"
+        [items]="sidebarItems"
+        [showSystemStatus]="showSystemStatus"
+        [systemStatusTitle]="systemStatusTitle"
+        [systemStatusMessage]="systemStatusMessage"
+        [systemStatusPercentage]="systemStatusPercentage"
+        [systemStatusIcon]="systemStatusIcon"
+        [animationDurationMs]="300"
+        [(collapsed)]="isSidebarCollapsed"
+        (itemSelected)="onSidebarItemSelected($event)"
+    ></lib-sidebar>
+
+    <!-- Contenido principal de la aplicacion -->
+    <main class="flex-1 p-6">
+        <!-- Barra superior del contenido -->
+        <div class="mb-4 flex items-center gap-3">
+            <!-- Titulo de la pantalla de pruebas -->
+            <h1 class="text-2xl font-semibold text-slate-800">Sandbox de componentes</h1>
+        </div>
+
+        <!-- Descripcion de uso -->
+        <p class="mb-6 text-sm text-slate-500">Selecciona una opcion del sidebar para navegar.</p>
+
+        <!-- Contenedor visual para las vistas de las rutas -->
+        <section class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <!-- Punto de render de la ruta activa -->
+            <router-outlet></router-outlet>
+        </section>
+    </main>
+</div>
+
+

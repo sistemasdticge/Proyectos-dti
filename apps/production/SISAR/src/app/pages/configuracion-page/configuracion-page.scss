@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.config-page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.config-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.config-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.92rem;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.7rem;
+  background: #f8fafc;
+  padding: 0.7rem 0.8rem;
+}
+
+.config-checkbox-row input[type='checkbox'] {
+  accent-color: #8b1a2e;
+  width: 0.95rem;
+  height: 0.95rem;
+  margin-top: 0.08rem;
+}
+
+@media (max-width: 767px) {
+  .config-actions-row {
+    justify-content: stretch;
+  }
+
+  .config-actions-row :is(button, .p-button) {
+    width: 100%;
+  }
+}

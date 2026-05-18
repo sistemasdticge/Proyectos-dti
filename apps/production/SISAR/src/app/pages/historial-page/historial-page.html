@@ -1,0 +1,110 @@
+<section class="historial-shell space-y-5">
+  <lib-dashboard-summary-header [title]="title()" [subtitle]="subtitle()"></lib-dashboard-summary-header>
+
+  @if (errorMessage()) {
+    <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 md:px-5">
+      <div class="flex items-start gap-3">
+        <span class="mt-1 h-8 w-1 rounded-full bg-[#8B1A2E]"></span>
+        <div>
+          <h2 class="text-lg font-semibold text-slate-800">{{ title() }}</h2>
+          <p class="mt-1 text-sm text-slate-500">
+            {{ isAdmin() ? 'Consulta temas terminados por area.' : 'Consulta seguimientos registrados en tu area.' }}
+          </p>
+        </div>
+      </div>
+      <p-tag
+        severity="info"
+        [value]="(isAdmin() ? temasRows().length : seguimientoRows().length) + ' registros'"
+      ></p-tag>
+    </header>
+
+    @if (loading()) {
+      <div class="px-4 py-8 text-center text-sm text-slate-500 md:px-5">
+        Cargando historial...
+      </div>
+    } @else if (isAdmin()) {
+      @if (!temasRows().length) {
+        <div class="px-4 py-8 text-center md:px-5">
+          <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <p class="mt-3 text-sm font-medium text-slate-700">No hay temas concluidos para mostrar.</p>
+        </div>
+      } @else {
+        <div class="divide-y divide-slate-100">
+          @for (row of temasRows(); track row.id) {
+            <article class="flex flex-wrap items-start justify-between gap-3 px-4 py-3 transition-colors hover:bg-slate-50 md:px-5">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <p class="whitespace-nowrap text-sm font-semibold text-[#8B1A2E]">{{ row.numeroControl }}</p>
+                  <p-tag value="Concluido" severity="success" styleClass="!rounded-full !text-xs !px-2"></p-tag>
+                  <span class="text-xs text-slate-400">
+                    {{ row.fechaSolventado ? (row.fechaSolventado | date:'dd/MM/yyyy HH:mm') : 'Sin fecha de solventado' }}
+                  </span>
+                </div>
+                <p class="mt-1 line-clamp-2 text-sm font-medium text-slate-800">{{ row.descripcion }}</p>
+                <p class="mt-2 text-xs font-medium text-slate-400">{{ row.areas }}</p>
+              </div>
+
+              <button
+                pButton
+                type="button"
+                class="p-button-outlined !rounded-lg !px-3 !py-1 !text-xs"
+                (click)="onTemaDetail(row)"
+              >
+                Ver detalle
+              </button>
+            </article>
+          }
+        </div>
+      }
+    } @else {
+      @if (!seguimientoRows().length) {
+        <div class="px-4 py-8 text-center md:px-5">
+          <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+            <i class="pi pi-history"></i>
+          </div>
+          <p class="mt-3 text-sm font-medium text-slate-700">No hay seguimientos para mostrar.</p>
+        </div>
+      } @else {
+        <div class="divide-y divide-slate-100">
+          @for (row of seguimientoRows(); track row.id) {
+            <article class="flex flex-wrap items-start justify-between gap-3 px-4 py-3 transition-colors hover:bg-slate-50 md:px-5">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <p class="whitespace-nowrap text-sm font-semibold text-[#8B1A2E]">{{ row.numeroControl }}</p>
+                  <p-tag
+                    [value]="row.situacion"
+                    [severity]="seguimientoSeverity(row.situacion)"
+                    styleClass="!rounded-full !text-xs !px-2"
+                  ></p-tag>
+                  <span class="text-xs text-slate-400">
+                    {{ row.fecha ? (row.fecha | date:'dd/MM/yyyy HH:mm') : 'Sin fecha' }}
+                  </span>
+                </div>
+                <p class="mt-1 line-clamp-2 text-sm font-medium text-slate-800">{{ row.tema }}</p>
+                <p class="mt-1 line-clamp-2 text-sm text-slate-600">{{ row.descripcion }}</p>
+                <p class="mt-2 text-xs font-medium text-slate-400">{{ row.archivoLabel }}</p>
+              </div>
+
+              <button
+                pButton
+                type="button"
+                class="p-button-outlined !rounded-lg !px-3 !py-1 !text-xs"
+                (click)="onSeguimientoDetail(row)"
+              >
+                Ver detalle
+              </button>
+            </article>
+          }
+        </div>
+      }
+    }
+  </section>
+</section>
